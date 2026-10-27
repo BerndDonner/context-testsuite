@@ -1,0 +1,612 @@
+\mainlanguage[de]
+\setuppapersize[A5]
+\setuplayout[width=110mm,height=175mm,backspace=15mm,topspace=12mm,header=0pt,footer=0pt]
+\starttext
+\begingroup
+
+\subject{G01 Math + tilde}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G02 Math + normal space}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345} stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G03 Math + explicit no-break space}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\nonbreakablespace stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G04 Math + nobreakspace}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\nobreakspace stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G05 Math + hskip 1em}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\hskip1em\relax stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G06 Math + thinspace}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\thinspace stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G07 Math + penalty 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\penalty0\space stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G08 Math + penalty 10000}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\penalty10000\space stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G09 Math + penalty -10000}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\penalty-10000\space stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G10 Math + penalty -10000 then tilde}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\penalty-10000~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G11 Math + kern 0 then tilde}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\kern0pt~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G12 Math + empty hbox then tilde}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\hbox{}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G13 Math + comma and normal space}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}, stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G14 Math + stretchable hskip}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\hskip1em plus 1em\relax stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G15 Math + enspace}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\enspace stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{G16 TeX inline math + tilde}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein $12345$~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\postinlinepenalty=0
+\subject{P01 postinlinepenalty 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\postinlinepenalty=10000
+\subject{P02 postinlinepenalty 10000}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\postinlinepenalty=-10000
+\subject{P03 postinlinepenalty -10000}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\postshortinlinepenalty=0
+\subject{P04 postshortinlinepenalty 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\postshortinlinepenalty=10000
+\subject{P05 postshortinlinepenalty 10000}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathinlinepenaltyfactor=0
+\subject{P06 mathinlinepenaltyfactor 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathinlinepenaltyfactor=20000
+\subject{P07 mathinlinepenaltyfactor 20000}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=3pt
+\subject{P08 mathsurround 3pt}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=3pt
+\subject{P09 mathsurround 3pt ordinary space}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345} stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurroundmode=4\mathsurroundskip=2pt
+\subject{P10 mathsurroundskip 2pt and mode 4}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurroundmode=4\mathsurroundskip=2pt
+\subject{P11 mathsurroundskip 2pt and mode 4 normal}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345} stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurroundmode=6\mathsurroundskip=2pt
+\subject{P12 mathsurroundskip 2pt and mode 6}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\postinlinepenalty=10000
+\subject{P13 postinlinepenalty 10000 and ordinary space}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345} stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\postinlinepenalty=-10000
+\subject{P14 postinlinepenalty -10000 and ordinary space}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345} stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=3pt\postinlinepenalty=-10000
+\subject{P15 mathsurround 3pt postinlinepenalty -10000}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=3pt\mathinlinepenaltyfactor=0
+\subject{P16 mathsurround 3pt mathinlinepenaltyfactor 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\postshortinlinepenalty=-10000
+\subject{P17 postshortinlinepenalty -10000, short math}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{1}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\postshortinlinepenalty=-10000
+\subject{P18 postshortinlinepenalty -10000 ordinary}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345} stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\postshortinlinepenalty=-10000
+\subject{P19 postshortinlinepenalty -10000, long math + tilde}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\postshortinlinepenalty=-10000
+\subject{P20 postshortinlinepenalty -10000, short math + normal space}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{1} stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{T01 text + tilde}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein 12345~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{T02 text + normal space}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein 12345 stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\tolerance=10000
+\subject{T03 math + tilde with line break tolerance 10000}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\emergencystretch=10pt
+\subject{T04 math + tilde with emergency stretch}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}~stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L01 direct glue plain}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=3*65536; n.options=0; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L02 direct glue noautobreak}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=3*65536; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L03 direct glue isspace}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=3*65536; n.options=4096; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L04 direct glue noautobreak+isspace}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=3*65536; n.options=4097; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L05 direct glue nondiscardable}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=3*65536; n.options=128; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L06 direct glue noautobreak+nondiscardable}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=3*65536; n.options=129; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L07 direct glue setdiscardable}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=3*65536; n.options=32; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L08 direct glue noautobreak+setdiscardable}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=3*65536; n.options=33; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L09 direct glue limit}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=3*65536; n.options=8; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L10 direct glue noautobreak+limit}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=3*65536; n.options=9; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L11 direct glue zero glue}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=0; n.options=0; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L12 direct glue zero glue noautobreak}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=0; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L13 direct glue stretchable glue}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=3*65536; n.stretch=3*65536; n.options=0; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L14 direct glue stretchable glue noautobreak}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new('glue'); n.width=3*65536; n.stretch=3*65536; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+
+\subject{L15 explicit forced break then protected glue}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\penalty-10000\directlua{local n=node.new("glue"); n.width=3*65536; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=3pt
+\subject{L16 zero-glue noauto and mathsurround}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=0; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=0pt\postinlinepenalty=-10000
+\subject{X01 cross math-surround 0pt / postinlinepenalty -10000 / glue opts 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=0; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=0pt\postinlinepenalty=-10000
+\subject{X02 cross math-surround 0pt / postinlinepenalty -10000 / glue opts 1}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=0pt\postinlinepenalty=0
+\subject{X03 cross math-surround 0pt / postinlinepenalty 0 / glue opts 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=0; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=0pt\postinlinepenalty=0
+\subject{X04 cross math-surround 0pt / postinlinepenalty 0 / glue opts 1}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=0pt\postinlinepenalty=50
+\subject{X05 cross math-surround 0pt / postinlinepenalty 50 / glue opts 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=0; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=0pt\postinlinepenalty=50
+\subject{X06 cross math-surround 0pt / postinlinepenalty 50 / glue opts 1}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=0pt\postinlinepenalty=10000
+\subject{X07 cross math-surround 0pt / postinlinepenalty 10000 / glue opts 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=0; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=0pt\postinlinepenalty=10000
+\subject{X08 cross math-surround 0pt / postinlinepenalty 10000 / glue opts 1}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=3pt\postinlinepenalty=-10000
+\subject{X09 cross math-surround 3pt / postinlinepenalty -10000 / glue opts 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=0; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=3pt\postinlinepenalty=-10000
+\subject{X10 cross math-surround 3pt / postinlinepenalty -10000 / glue opts 1}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=3pt\postinlinepenalty=0
+\subject{X11 cross math-surround 3pt / postinlinepenalty 0 / glue opts 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=0; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=3pt\postinlinepenalty=0
+\subject{X12 cross math-surround 3pt / postinlinepenalty 0 / glue opts 1}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=3pt\postinlinepenalty=50
+\subject{X13 cross math-surround 3pt / postinlinepenalty 50 / glue opts 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=0; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=3pt\postinlinepenalty=50
+\subject{X14 cross math-surround 3pt / postinlinepenalty 50 / glue opts 1}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=3pt\postinlinepenalty=10000
+\subject{X15 cross math-surround 3pt / postinlinepenalty 10000 / glue opts 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=0; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurround=3pt\postinlinepenalty=10000
+\subject{X16 cross math-surround 3pt / postinlinepenalty 10000 / glue opts 1}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurroundmode=4\mathsurroundskip=2pt
+\subject{X17 cross mathsurroundmode 4 and glue opts 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=0; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurroundmode=4\mathsurroundskip=2pt
+\subject{X18 cross mathsurroundmode 4 and glue opts 1}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurroundmode=6\mathsurroundskip=2pt
+\subject{X19 cross mathsurroundmode 6 and glue opts 0}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=0; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\page
+\begingroup
+\mathsurroundmode=6\mathsurroundskip=2pt
+\subject{X20 cross mathsurroundmode 6 and glue opts 1}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{12345}\directlua{local n=node.new("glue"); n.width=3*65536; n.options=1; node.write(n)}stelliges Display und einen Fehler.
+\stopframedtext
+\endgroup
+\stoptext

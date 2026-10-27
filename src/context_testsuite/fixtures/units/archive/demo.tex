@@ -1,0 +1,72 @@
+\mainlanguage[de]
+
+\setupunit
+  [alternative=mathematics,
+   method=3]
+
+\appendtoks
+  \enablemathpunctuation
+\to\everyunits
+
+% Symmetrischer Abstand bei \cdot\unit{...}
+
+\setmathspacing
+  \mathbinarycode
+  \mathdimensioncode
+  \allsplitstyles
+  \medmuskip
+
+\setmathspacing
+  \mathbinarycode
+  \mathdimensioncode
+  \allunsplitstyles
+  \pettymuskip
+
+% Multiplikationspunkte innerhalb von \unit korrigieren
+
+\installunitsseparator{normal}
+  {\ifmmode
+     \mathbin{\cdot}
+   \else
+     \cdot
+   \fi}
+
+ \starttext
+
+\startformula
+  \unit{306.78}
+  \frac{\unit{kilometer}}{\unit{hour}}
+\stopformula
+
+\startformula
+  U = \frac{W}{I\cdot t}
+    = \frac{F\cdot s}{I\cdot t}
+    = \frac{m\cdot a\cdot s}{I\cdot t}
+\stopformula
+
+\startformula
+  \unit{1 volt}
+  =
+  \frac{
+    \unit{kilogram}\cdot
+    \frac{\unit{meter}}{\unit{square second}}
+    \cdot\unit{meter}
+  }{
+    \unit{ampere}\cdot\unit{second}
+  }
+  =
+  \frac{
+    \unit{kilogram}\cdot\unit{square meter}
+  }{
+    \unit{ampere}\cdot\unit{cubic second}
+  }
+\stopformula
+
+\startformula
+  \unit{1 volt}
+  =
+  \unit{1 kilogram square meter per ampere cubic second}
+\stopformula
+
+\stoptext
+

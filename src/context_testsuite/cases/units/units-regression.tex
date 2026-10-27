@@ -1,0 +1,39 @@
+\mainlanguage[de]
+\input include/conventions/units.tex
+\input include/workarounds/lmtx-units-2026.tex
+\starttext
+\chapter{Einheiten -- Regressionstests}
+
+\section{Text und Mathematik}
+Im Messbereich \m{\unit{2 kilo ohm}} ergibt sich
+\m{\unit{0.152 kilo ohm}}.
+
+\m{R = \unit{5.6 kilo ohm}},
+\m{f(1,2)} und
+\m{U = \unit{100 micro volt}}.
+
+\section{Ziffern und Vorzeichen}
+\m{\unit{3.1415}},
+\m{\unit{-0.001}},
+\m{\unit{1.2e-3 ampere}},
+\m{\unit{0.5 percent}}.
+
+\section{Zusammengesetzte Groessen}
+\m{\unit{4.25 euro}},
+\m{\unit{0.5 volt per division}},
+\m{\unit{1 kilogram square meter per ampere cubic second}}.
+
+\startformula
+ \frac{\unit{1 meter}-\unit{3 meter}}
+      {\unit{4 second}-\unit{6 second}}
+ \qquad
+ \unit{1 volt}
+ = \frac{\unit{kilogram}\cdot\unit{square meter}}
+        {\unit{ampere}\cdot\unit{cubic second}}
+\stopformula
+
+\section{MetaPost (feste TeX-Beschriftung)}
+\startMPcode
+ draw textext(btex \m{\unit{5.6 kilo ohm}} etex);
+\stopMPcode
+\stoptext

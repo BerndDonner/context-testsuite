@@ -1,0 +1,159 @@
+% ConTeXt LMTX - kanonischer Stresstest aus context-komplett.tgz
+% JEDE getestete physikalische Groesse: \m{\unit{Zahl Einheit}}.
+% Urspruengliche Makro-Schreibweisen wurden transformiert, NICHT wiederverwendet.
+% Testnummern und Konvertierungsentscheidungen: herkunft-und-konvertierung.csv.
+% Der einzige Unterschied beider Testdateien ist die Workaround-Zeile.
+\appendtoks\enablemathpunctuation\to\everyunits
+\mainlanguage[de]
+\setuppapersize[A4,landscape][A4,landscape]
+\setuplayout[backspace=1.15cm,topspace=1.05cm,width=middle,height=middle,header=0.5cm,footer=0.7cm]
+\setupbodyfont[modern,11pt]
+\setupunit[method=3]
+% Oszilloskop-Skalenteilung und Waehrung als eigene Einheiten registrieren.
+\registerunit[unit][division=division,euro=euro]
+\setupunittext[division=div,euro=€]
+\setdigitmode{3}
+\setupinterlinespace[line=14pt]
+\setupfootertexts[Kanonischer Einheiten-Stresstest][\pagenumber]
+\def\SectionHeading#1{\blank[medium]\noindent{\bf #1}\par\blank[small]}
+\def\Case#1#2#3{%
+  \NC {\ttxx #1} \NC {\ttxx\detokenize{#2}} \NC {\ttxx\detokenize{#3}} \NC \m{#3}\NC\NR
+}
+\starttext
+\title{LMTX: kanonische Zahl + Einheit}
+\noindent Variante: {\bf Mit Workaround}. Format: \type{\unit{Zahl ausgeschriebene-Einheit}} innerhalb des Mathematikmodus.
+\blank[small]
+\noindent Links steht die historische Schulschreibweise, danach die explizite kanonische Eingabe. Die rechte Spalte ist die tatsaechliche Ausgabe. Einheiten ohne historischen Messwert erhalten teils einen klar markierten synthetischen Testwert; siehe CSV.
+\blank[small]
+\SectionHeading{A -- Dezimalwerte aus Schuldateien}
+\starttabulate[|l|l|l|l|]
+\NC ID \NC Historische Schreibweise \NC Kanonischer Quelltext \NC PDF-Ausgabe \NC\NR\HL
+\Case{A01}{\unit{0.1 euro per minute}}{\unit{0.1 euro per minute}}
+\Case{A02}{\unit{4.25 euro}}{\unit{4.25 euro}}
+\Case{A03}{\unit{5.0 cm}}{\unit{5.0 centi meter}}
+\Case{A04}{\unit{7.7 cm}}{\unit{7.7 centi meter}}
+\Case{A05}{\unit{67386.5 mm^3}}{\unit{67386.5 cubic milli meter}}
+\Case{A06}{\unit{0,00225 mm^3}}{\unit{0.00225 cubic milli meter}}
+\Case{A07}{\unit{1,8 cm^3}}{\unit{1.8 cubic centi meter}}
+\Case{A08}{\unit{1.62 Newton/kg}}{\unit{1.62 newton per kilogram}}
+\Case{A09}{\unit{9.83 Newton per kilogram}}{\unit{9.83 newton per kilogram}}
+\Case{A10}{\unit{9.78 Newton per kilogram}}{\unit{9.78 newton per kilogram}}
+\Case{A11}{\unit{1.00 Newton}}{\unit{1.00 newton}}
+\Case{A12}{\unit{185.00 g}}{\unit{185.00 gram}}
+\Case{A13}{\unit{1,76 m}}{\unit{1.76 meter}}
+\Case{A14}{\unit{365,25 day}}{\unit{365.25 day}}
+\Case{A15}{\dn{0.47}\,\unit{kilo ohm}}{\unit{0.47 kilo ohm}}
+\HL\stoptabulate
+
+\SectionHeading{B -- Präfixe und Elektrotechnik}
+\starttabulate[|l|l|l|l|]
+\NC ID \NC Historische Schreibweise \NC Kanonischer Quelltext \NC PDF-Ausgabe \NC\NR\HL
+\Case{B01}{56\unit{micro Volt}}{\unit{56 micro volt}}
+\Case{B02}{\text{\digits{6.0}}\unit{microvolt}}{\unit{6.0 micro volt}}
+\Case{B03}{5\unit{micro second}}{\unit{5 micro second}}
+\Case{B04}{\digits{1.2} \unit{micro Farad}}{\unit{1.2 micro farad}}
+\Case{B05}{\unit{1micro Farad}}{\unit{1 micro farad}}
+\Case{B06}{10\unit{micro Ampere}}{\unit{10 micro ampere}}
+\Case{B07}{5\unit{nano second}}{\unit{5 nano second}}
+\Case{B08}{\dn{2.2}\unit{nF}}{\unit{2.2 nano farad}}
+\Case{B09}{150000\unit{pA}}{\unit{150000 pico ampere}}
+\Case{B10}{\digits{3.41} \unit{mA}}{\unit{3.41 milli ampere}}
+\Case{B11}{\dn{1.5}\unit{mV}}{\unit{1.5 milli volt}}
+\Case{B12}{1\unit{ms}}{\unit{1 milli second}}
+\Case{B13}{50\unit{milli Volt/ div}}{\unit{50 milli volt per division}}
+\Case{B14}{1\unit{mega Ohm}}{\unit{1 mega ohm}}
+\Case{B15}{\dn{0.47}\,\unit{kilo ohm}}{\unit{0.47 kilo ohm}}
+\Case{B16}{1\unit{k Ohm}}{\unit{1 kilo ohm}}
+\Case{B17}{\digits{2.8} ... \unit{Mega Pascal}}{\unit{2.8 mega pascal}}
+\Case{B18}{\unit{0 celsius}}{\unit{0 celsius}}
+\Case{B19}{\unit{100 celsius}}{\unit{100 celsius}}
+\Case{B20}{\unit{32 fahrenheit}}{\unit{32 fahrenheit}}
+\HL\stoptabulate
+
+\SectionHeading{C -- Zusammengesetzte Einheiten}
+\starttabulate[|l|l|l|l|]
+\NC ID \NC Historische Schreibweise \NC Kanonischer Quelltext \NC PDF-Ausgabe \NC\NR\HL
+\Case{C01}{\unit{m/s}}{\unit{6 meter per second}}
+\Case{C02}{\unit{m/s^2}}{\unit{1.62 meter per square second}}
+\Case{C03}{\unit{km/h}}{\unit{6 kilo meter per hour}}
+\Case{C04}{\unit{km/h^2}}{\unit{3 kilo meter per square hour}}
+\Case{C05}{\digits 1.6 \unit{Newton/kg}}{\unit{1.6 newton per kilogram}}
+\Case{C06}{\unit{Newton/m}}{\unit{2 newton per meter}}
+\Case{C07}{0.5\unit{Volt/ div}}{\unit{0.5 volt per division}}
+\Case{C08}{\unit{micro second/ div}}{\unit{0.2 micro second per division}}
+\Case{C09}{0.2\unit{milli second/ div}}{\unit{0.2 milli second per division}}
+\Case{C10}{\digits{0.0175}\frac{\unit{Ohm mm^2}}{\unit{m}}}{\unit{0.0175 ohm square milli meter per meter}}
+\Case{C11}{\frac{70}{3}\unit{Volt^2 milli second}}{\unit{1 square volt milli second}}
+\Case{C12}{\dn{17}\,\unit{micro watt per square milli meter}}{\unit{17 micro watt per square milli meter}}
+\Case{C13}{\unit{milli meter/ milli second ^2}}{\unit{1 milli meter per square milli second}}
+\Case{C14}{1\unit{g}/\unit{cm^3}}{\unit{1 gram per cubic centimeter}}
+\Case{C15}{10 \unit{km^2}}{\unit{10 square kilo meter}}
+\Case{C16}{\unit{kWh}}{\unit{1 kilo watt hour}}
+\HL\stoptabulate
+
+\SectionHeading{D -- Alte Kurzformen kanonisiert}
+\starttabulate[|l|l|l|l|]
+\NC ID \NC Historische Schreibweise \NC Kanonischer Quelltext \NC PDF-Ausgabe \NC\NR\HL
+\Case{D01}{\unit{1cm}}{\unit{1 centi meter}}
+\Case{D02}{\unit{7.7 cm}}{\unit{7.7 centi meter}}
+\Case{D03}{\unit{6 cm/s}}{\unit{6 centi meter per second}}
+\Case{D04}{\unit{67386.5 mm^3}}{\unit{67386.5 cubic milli meter}}
+\Case{D05}{\unit{1.62 Newton/kg}}{\unit{1.62 newton per kilogram}}
+\Case{D06}{\unit{1.00 Newton}}{\unit{1.00 newton}}
+\Case{D07}{\unit{365,25 day}}{\unit{365.25 day}}
+\Case{D08}{\unit{1,8 cm^3}}{\unit{1.8 cubic centi meter}}
+\Case{D09}{\unit{0,00225 mm^3}}{\unit{0.00225 cubic milli meter}}
+\Case{D10}{\unit{220nano Farad}}{\unit{220 nano farad}}
+\HL\stoptabulate
+
+\SectionHeading{E -- Zusätzliche Grenzfälle (synthetisch)}
+\starttabulate[|l|l|l|l|]
+\NC ID \NC Historische Schreibweise \NC Kanonischer Quelltext \NC PDF-Ausgabe \NC\NR\HL
+\Case{E01}{\unit{5.6 kiloohm}}{\unit{5.6 kilo ohm}}
+\Case{E02}{\unit{100 microvolt}}{\unit{100 micro volt}}
+\Case{E03}{\unit{0.001 microvolt}}{\unit{0.001 micro volt}}
+\Case{E04}{\unit{12345.67 meter}}{\unit{12345.67 meter}}
+\Case{E05}{\unit{-5.6 kiloohm}}{\unit{-5.6 kilo ohm}}
+\Case{E06}{\unit{1.23 megaohm}}{\unit{1.23 mega ohm}}
+\Case{E07}{\unit{20 µm}}{\unit{20 micro meter}}
+\Case{E08}{\unit{20 μm}}{\unit{20 micro meter}}
+\Case{E09}{\unit{20 um}}{\unit{20 micro meter}}
+\Case{E10}{\unit{5,6 kiloohm}}{\unit{5.6 kilo ohm}}
+\Case{E11}{\unit{2000000 nano second}}{\unit{2000000 nano second}}
+\HL\stoptabulate
+
+\page
+\SectionHeading{Formeln mit ausschliesslich kanonischen Groessen}
+\noindent {\bf F01}\quad \m{T_{ADC}={1\over \unit{200 kilo hertz}}=\unit{5 micro second}}\par\blank[medium]
+\noindent {\bf F02}\quad \m{R_2=\unit{1 kilo ohm},\quad R_1=\unit{4 kilo ohm},\quad C=\unit{2.2 nano farad}}\par\blank[medium]
+\noindent {\bf F03}\quad \m{R_2 C=\unit{1 kilo ohm}\cdot \unit{2.2 nano farad}}\par\blank[medium]
+\noindent {\bf F04}\quad \m{t_S=4\cdot\unit{5 micro second}=\unit{20 micro second}}\par\blank[medium]
+\noindent {\bf F05}\quad \m{\unit{0.47 kilo ohm}\cdot(\unit{1 milli ampere})^2}\par\blank[medium]
+\noindent {\bf F06}\quad \m{\unit{17 micro watt per square milli meter}}\par\blank[medium]
+\noindent {\bf F07}\quad \m{S=\unit{2.5 milli volt per kilo pascal}}\par\blank[medium]
+\noindent {\bf F08}\quad \m{\frac{v(\unit{5.29 second})-v(\unit{0 second})}{\unit{5.29 second}-\unit{0 second}}}\par\blank[medium]
+\noindent {\bf F09}\quad \m{\frac{\unit{1 meter}-\unit{3 meter}}{\unit{4 second}-\unit{6 second}}}\par\blank[medium]
+\noindent {\bf F10}\quad \m{\unit{100 micro volt}+\unit{0.001 milli volt}=\unit{101 micro volt}}\par\blank[medium]
+\page
+\SectionHeading{Kontrollgruppe: Interpunktion und normale Zahl}
+\noindent Die Kontrollgruppe ist absichtlich ohne physikalische Einheit und somit keine Ausnahme von der kanonischen Schreibweise.
+\starttabulate[|l|l|l|]
+\NC Referenz \NC Quelle \NC Ausgabe \NC\NR\HL
+\NC Funktionsargumente \NC \type{\m{f(1,2)}} \NC \m{f(1,2)} \NC\NR
+\NC Koordinaten \NC \type{\m{(1,2)}} \NC \m{(1,2)} \NC\NR
+\NC gewöhnliches Dezimalkomma \NC \type{\m{5,6}} \NC \m{5,6} \NC\NR
+\NC Ziffernformatter \NC \type{\m{\digits{5.6}}} \NC \m{\digits{5.6}} \NC\NR
+\stoptabulate
+\blank[medium]
+\SectionHeading{MetaPost: TeX-Beschriftungen mit kanonischen Groessen}
+\noindent Der gesamte Inhalt von \type{btex ... etex} wird vom TeX-Interpreter verarbeitet.
+\blank[medium]
+\startMPcode
+  draw (0,0)--(17cm,0) withpen pencircle scaled .5pt;
+  draw textext(btex \m{\unit{5.6 kilo ohm}} etex) shifted (0,1.1cm);
+  draw textext(btex \m{R=\unit{5.6 kilo ohm}} etex) shifted (6cm,1.1cm);
+  draw textext(btex \m{\frac{\unit{1 meter}-\unit{3 meter}}{\unit{4 second}-\unit{6 second}}} etex) shifted (11cm,1.1cm);
+\stopMPcode
+\blank[medium]
+\noindent Bei MetaPost werden nur feste Beschriftungen getestet; dynamische numerische MP-Strings sind hier nicht enthalten.
+\stoptext

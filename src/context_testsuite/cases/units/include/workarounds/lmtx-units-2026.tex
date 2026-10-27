@@ -1,0 +1,30 @@
+% NUR temporaere LMTX-Kompatibilitaet, getestet in ConTeXt 2026.
+% Jede Korrektur hat einen gesonderten Test; entfernen, sobald upstream korrigiert.
+% Gegen eine neuere Distribution immer erneut testen!
+%
+% 1. Dezimalkomma im Mathematikmodus: vor diesem Workaround wurde
+%    \unit{5.6 kilo ohm} als "5, 6 kOhm" gesetzt.
+%    2024/2025: dieser Workaround darf NICHT aktiviert werden.
+\appendtoks
+  \enablemathpunctuation
+\to\everyunits
+
+% 2. Symmetrischer Abstand bei \cdot vor \unit.
+\setmathspacing
+  \mathbinarycode
+  \mathdimensioncode
+  \allsplitstyles
+  \medmuskip
+\setmathspacing
+  \mathbinarycode
+  \mathdimensioncode
+  \allunsplitstyles
+  \pettymuskip
+
+% 3. Symmetrischer Abstand des internen Multiplikationspunktes in \unit.
+\installunitsseparator{normal}
+  {\ifmmode
+     \mathbin{\cdot}
+   \else
+     \cdot
+   \fi}

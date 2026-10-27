@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.venv/
+venv/
+dist/
+
+# Generated test results, logs and temporary workspaces
+results/
+*.log
+*.tuc
+*.synctex*
+*.fls
+*.fdb_latexmk
+
+# ConTeXt scratch artifacts (intentional reference PDFs may be committed)
+*.mpx
+*-mpgraph.*
+*-mpgraph/
+
+# Local Nix build outputs; flake.lock MUST be committed after generating it
+result
+result-*
+.direnv/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/

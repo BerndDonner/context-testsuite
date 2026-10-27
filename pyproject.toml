@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "context-testsuite"
+version = "0.1.0"
+description = "Independent ConTeXt LMTX regression and PDF analysis"
+requires-python = ">=3.11"
+dependencies = ["PyMuPDF>=1.24"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+context-testsuite = "context_testsuite.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools.package-data]
+context_testsuite = ["cases/**/*", "fixtures/**/*"]

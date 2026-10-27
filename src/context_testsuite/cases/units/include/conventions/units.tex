@@ -1,0 +1,13 @@
+% Schulkonvention: physikalische Groessen und numerische Werte.
+% Stand: 2026-10-24.
+% \unit{3.1415}             fuer mathematische Zahlen ohne Einheit
+% \unit{5.6 kilo ohm}      fuer Zahl und Einheit
+% \unit{micro volt}         fuer Einheiten ohne Zahlenwert
+% Eingabe in \unit mit Punkt als Dezimaltrennzeichen.
+% Die Ausgabe ist deutsch (Komma); die Einheitennamen sind ausgeschrieben.
+% Konvention und Upstream-Workarounds sind absichtlich getrennt.
+\setupunit[alternative=mathematics,method=3]
+
+% Erweiterungen ueber die offizielle Registrierung, nicht ueber einen Parser-Fork.
+\registerunit[unit][division=division,euro=euro]
+\setupunittext[division=div,euro=€]

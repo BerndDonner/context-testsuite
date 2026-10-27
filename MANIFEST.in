@@ -1,0 +1,2 @@
+recursive-include src/context_testsuite/cases *
+recursive-include src/context_testsuite/fixtures *
