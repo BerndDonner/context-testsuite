@@ -1,6 +1,7 @@
 """Smoke-tests of public command-line interfaces, without ConTeXt or Nix."""
 from pathlib import Path
 import json
+import os
 import subprocess
 import sys
 
@@ -72,3 +73,17 @@ def test_units_smoke_runner_with_stub_executable(tmp_path):
     summary = json.loads((out / "run-report.json").read_text())
     assert summary["suites"][0]["result"] == "pass_compile_only"
     assert (out / "units-smoke/units-regression/include/conventions/units.tex").is_file()
+
+
+def test_launcher_uses_explicit_python_even_if_path_contains_wrong_python(tmp_path):
+    """Regression: pytest's Python may differ from `python3` on PATH."""
+    wrong_python = tmp_path / "python3"
+    wrong_python.write_text("#!/bin/sh\nexit 97\n", encoding="utf-8")
+    wrong_python.chmod(0o755)
+    env = os.environ.copy()
+    env["PATH"] = f"{tmp_path}{os.pathsep}{env['PATH']}"
+    env["CONTEXT_TESTSUITE_PYTHON"] = sys.executable
+    result = subprocess.run(CLI + ["list", "--json"],
+                            env=env, capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    assert "math-extended" in json.loads(result.stdout)

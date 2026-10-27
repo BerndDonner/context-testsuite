@@ -31,6 +31,14 @@ pytest -q
 context-testsuite list
 ```
 
+Die Nix-DevShell pinnt für die CLI explizit den mit PyMuPDF und pytest
+bestückten Python-Interpreter über `CONTEXT_TESTSUITE_PYTHON` und stellt
+dessen `bin`-Verzeichnis an den Anfang von `PATH`. Dadurch verwendet die CLI
+nicht versehentlich ein anderes `python3` aus dem System oder einer weiteren
+Python-Installation. Wenn du eine fremde Python-Umgebung verwendest, kannst du
+diesen Interpreter optional selbst auswählen, beispielsweise
+`CONTEXT_TESTSUITE_PYTHON="$(command -v python3)" ./bin/context-testsuite list`.
+
 Aus dem Git-Arbeitsbaum geht auch `./bin/context-testsuite` ohne Installation,
 sofern Python/PyMuPDF vorhanden sind. Für Math-Tests wird zusätzlich
 `pdftotext` (Poppler) benötigt; `nix develop` liefert es mit. Für eingebaute

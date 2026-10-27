@@ -11,6 +11,7 @@ import hashlib
 import html
 import json
 import os
+import sys
 from pathlib import Path, PurePosixPath
 from datetime import datetime, timezone
 
