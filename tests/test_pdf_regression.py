@@ -4,19 +4,19 @@ from tempfile import TemporaryDirectory
 import unittest
 import sys
 
-import fitz
+import pymupdf
 
 from context_testsuite.pdf import compare, compare_files, pdf_relpath
 
 
 def make_pdf(path, texts, width=595, height=842):
     path.parent.mkdir(parents=True, exist_ok=True)
-    doc = fitz.open()
+    doc = pymupdf.open()
     for index, text in enumerate(texts):
         page = doc.new_page(width=width, height=height)
         page.insert_text((50, 100), text, fontsize=12)
         if index == 0:
-            page.draw_rect(fitz.Rect(70, 250, 150, 330), color=(0.1, 0.2, 0.3))
+            page.draw_rect(pymupdf.Rect(70, 250, 150, 330), color=(0.1, 0.2, 0.3))
     doc.save(path)
     doc.close()
 
@@ -81,12 +81,12 @@ class RegressionTests(unittest.TestCase):
     def test_image_only_change(self):
         # Identical text, but a changed colored rectangle on page 1.
         path = self.built / 'Fach/Aufgabenblatt.pdf'
-        doc = fitz.open()
+        doc = pymupdf.open()
         for i, t in enumerate(['Hallo Welt', 'Seite zwei']):
             page = doc.new_page(width=595, height=842)
             page.insert_text((50, 100), t, fontsize=12)
             if i == 0:
-                page.draw_rect(fitz.Rect(70, 250, 150, 330), color=(0.9, 0.1, 0.1))
+                page.draw_rect(pymupdf.Rect(70, 250, 150, 330), color=(0.9, 0.1, 0.1))
         doc.save(path)
         doc.close()
         data, folder = compare(self.rel, self.built, self.installed, self.out, 92, 16)

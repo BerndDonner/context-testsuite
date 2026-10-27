@@ -7,7 +7,6 @@ from pathlib import Path
 import shutil
 import sys
 
-from .pdf import compare_files
 from .runner import available_suites, run_suites
 
 
@@ -59,6 +58,7 @@ def main(argv: list[str] | None = None) -> int:
             if not 0 <= args.pixel_threshold <= 254:
                 raise ValueError("--pixel-threshold must be between 0 and 254")
             folder = args.output or Path("results/pdf") / args.candidate.stem
+            from .pdf import compare_files
             data, folder = compare_files(args.reference, args.candidate, folder, args.dpi, args.pixel_threshold)
         except (ValueError, OSError, RuntimeError) as exc:
             print(f"Error: {exc}", file=sys.stderr)

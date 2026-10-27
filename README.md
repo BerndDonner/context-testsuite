@@ -15,9 +15,8 @@ Bereinigung stehen in [docs/MIGRATION.md](docs/MIGRATION.md).
 Mit Nix (Python-DevShell, **ohne** ConTeXt-Installation):
 
 ```sh
-nix flake lock               # einmalig; flake.lock anschließend committen
 nix develop
-pytest -q
+python -m pytest -q
 context-testsuite list
 ```
 
@@ -31,13 +30,25 @@ pytest -q
 context-testsuite list
 ```
 
-Die Nix-DevShell pinnt für die CLI explizit den mit PyMuPDF und pytest
-bestückten Python-Interpreter über `CONTEXT_TESTSUITE_PYTHON` und stellt
-dessen `bin`-Verzeichnis an den Anfang von `PATH`. Dadurch verwendet die CLI
-nicht versehentlich ein anderes `python3` aus dem System oder einer weiteren
-Python-Installation. Wenn du eine fremde Python-Umgebung verwendest, kannst du
-diesen Interpreter optional selbst auswählen, beispielsweise
-`CONTEXT_TESTSUITE_PYTHON="$(command -v python3)" ./bin/context-testsuite list`.
+Die DevShell ist bewusst eine normale, eigenständige `pkgs.mkShell` mit
+`pkgs.python3.withPackages`: `python`, `pytest` und `pymupdf` stammen aus
+derselben Nix-Python-Umgebung. Die DevShell stellt `${python}/bin` explizit
+an den Anfang von `PATH`, damit die CLI nicht versehentlich einen anderen
+Python-Interpreter verwendet. Es gibt **keine** zusätzliche
+Interpreter-Auswahl per Umgebungsvariable. Der CLI-Starter führt schlicht
+`python -m context_testsuite` aus. Auf NixOS verwenden wir für die
+Selbsttests bewusst **`python -m pytest`** statt des separat gestarteten
+`pytest`: Bei dir hatten beide Aufrufarten verschiedene wirksame
+Python-Paketpfade, obwohl ihre Programme im selben Nix-Environment lagen.
+PyMuPDF wird über die aktuelle API
+`import pymupdf` importiert (nicht über das veraltete `fitz`).
+
+Zur Diagnose bei Python-Pfadproblemen:
+
+```sh
+command -v python
+python -c 'import sys, pymupdf; print(sys.executable, pymupdf.__doc__.splitlines()[0])'
+```
 
 Aus dem Git-Arbeitsbaum geht auch `./bin/context-testsuite` ohne Installation,
 sofern Python/PyMuPDF vorhanden sind. Für Math-Tests wird zusätzlich
@@ -92,6 +103,80 @@ Die originalen Tests mit ihren Erwartungen und bekannten Grenzen stehen in
 [math-basic](src/context_testsuite/cases/math/basic/README.md),
 [math-extended](src/context_testsuite/cases/math/extended/README.md) und
 [units-smoke](src/context_testsuite/cases/units/README.md).
+
+## Echte LMTX-Regression: gepatcht gegen Upstream
+
+Die Python-Selbsttests (`python -m pytest -q`) prüfen **nicht**, ob die
+migrierten Math-Tests mit echten ConTeXt-Versionen bestehen. Diese
+Validierung muss einmal auf einem Rechner mit den gepinnten Builds
+stattfinden, **bevor** die ursprünglichen Math-Tests aus `NixOS-Config`
+entfernt werden. Die folgenden Pfade sind nur ein konkretes Beispiel; die
+Testsuite kennt das Repository `NixOS-Config` nicht und verlangt lediglich
+zwei ausführbare `context`-Dateien.
+
+**1. Beide Versionen bauen** (im Repository `NixOS-Config`):
+
+```sh
+nix build .#context -o result-context-unpatched -L
+nix build .#context-patched -o result-context-patched -L
+```
+
+Das sind die gepinnten Varianten derselben ConTeXt-Quellrevision. Ihre
+Paket-Build-/Smoke-Tests laufen wie bisher beim Build; die vollständige
+`context-testsuite` wird dabei **nicht** gestartet.
+
+**2. Vergleich ausführen** (im Repository `context-testsuite`, nach `nix develop`):
+
+```sh
+context-testsuite run \
+  --baseline ../NixOS-Config/result-context-unpatched/bin/context \
+  --context ../NixOS-Config/result-context-patched/bin/context \
+  --suite all \
+  --output results/lmtx-patch-validation
+```
+
+Die relative Pfadangabe setzt voraus, dass die beiden Repositories
+nebeneinander liegen. Andernfalls die ausführbaren Dateien mit ihren
+absoluten Pfaden angeben. `--baseline` ist **ungepatcht**, `--context`
+ist **gepatcht**; ein Vertauschen ändert die Testaussage. Der Exitcode
+ist `0`, wenn alle gewählten Suites bestehen, sonst `1`.
+
+**3. Ergebnisse kontrollieren:**
+
+```sh
+cat results/lmtx-patch-validation/run-report.json
+cat results/lmtx-patch-validation/math-basic/runner.log
+cat results/lmtx-patch-validation/math-extended/runner.log
+```
+
+Die Berichte enthalten die Prüfresultate und die verwendeten Executable-
+Pfade. Bei Fehlschlägen zusätzlich die erzeugten `build.log`-Dateien
+unter den jeweiligen `before/`- und `after/`-Ordnern untersuchen.
+
+**4. Optional feststellen, ob Upstream das Sollverhalten schon erfüllt:**
+
+```sh
+context-testsuite run \
+  --context ../NixOS-Config/result-context-unpatched/bin/context \
+  --suite math-extended \
+  --output results/lmtx-upstream-only
+```
+
+Dieser Lauf darf **FAIL** ergeben, solange der Bug im ungepatchten
+Upstream vorhanden ist. Ein **PASS** ist ein Hinweis darauf, dass der
+Patch möglicherweise unnötig geworden ist, aber noch kein Beweis:
+Dann zusätzlich die vollständig ungepatchte Version gegen die übrigen
+Testfälle und produktive Dokumente prüfen. Auch wenn ein Patch nicht
+mehr sauber auf neue Quellen anwendbar ist, folgt daraus allein nicht,
+dass der Fehler behoben wurde.
+
+Erwartungen der alten Math-Suiten sind derzeit absichtlich unverändert:
+`math-basic` umfasst 12, `math-extended` 76 Fälle. `units-smoke` prüft
+**nur erfolgreiche Kompilierung und PDF-Gültigkeit**, keine visuellen
+Sollwerte. Erst nach einem nachweisbar erfolgreichen Vergleich der
+Testsuite dürfen die alten Math-Checks im anderen Repository entfernt
+werden. Die Testartefakte liegen unter `results/` und sind per
+`.gitignore` ausgeschlossen.
 
 ## Spontan zwei PDFs vergleichen
 

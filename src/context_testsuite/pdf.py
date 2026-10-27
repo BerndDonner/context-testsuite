@@ -11,17 +11,10 @@ import hashlib
 import html
 import json
 import os
-import sys
 from pathlib import Path, PurePosixPath
 from datetime import datetime, timezone
 
-try:
-    import fitz
-except ImportError:
-    sys.exit(
-        "Fehler: PyMuPDF fehlt. Starte die angepasste Nix-DevShell "
-        "(flake.nix) oder installiere das Python-Paket 'pymupdf'."
-    )
+import pymupdf
 
 
 def pdf_relpath(raw: str) -> PurePosixPath:
@@ -51,7 +44,7 @@ def sha256(path: Path) -> str:
     return hash_obj.hexdigest()
 
 
-def rect_props(page: fitz.Page) -> dict:
+def rect_props(page: pymupdf.Page) -> dict:
     r = page.rect
     return {
         "width_pt": round(r.width, 3),
@@ -60,7 +53,7 @@ def rect_props(page: fitz.Page) -> dict:
     }
 
 
-def pixels_diff(before: fitz.Pixmap, after: fitz.Pixmap, threshold: int):
+def pixels_diff(before: pymupdf.Pixmap, after: pymupdf.Pixmap, threshold: int):
     """Return changed pixel count and a change mask. RGB, alpha=False."""
     if (before.width, before.height) != (after.width, after.height):
         return None, None
@@ -174,7 +167,7 @@ def compare_files(baseline: Path, build: Path, folder: Path, dpi: int,
     for candidate in (build, baseline):
         if candidate == baseline and not baseline.is_file():
             continue
-        with fitz.open(candidate) as checked:
+        with pymupdf.open(candidate) as checked:
             if checked.needs_pass:
                 raise ValueError(f"PDF ist passwortgeschuetzt: {candidate}")
 
@@ -201,7 +194,7 @@ def compare_files(baseline: Path, build: Path, folder: Path, dpi: int,
     }
     if not baseline.is_file():
         # Still check the new document is a valid PDF.
-        with fitz.open(build) as doc:
+        with pymupdf.open(build) as doc:
             if doc.needs_pass:
                 raise ValueError("Build-PDF ist passwortgeschuetzt")
             data["summary"]["build_pages"] = len(doc)
@@ -210,7 +203,7 @@ def compare_files(baseline: Path, build: Path, folder: Path, dpi: int,
         return data, folder
 
     data["baseline"]["sha256"] = sha256(baseline)
-    with fitz.open(baseline) as old_doc, fitz.open(build) as new_doc:
+    with pymupdf.open(baseline) as old_doc, pymupdf.open(build) as new_doc:
         if old_doc.needs_pass or new_doc.needs_pass:
             raise ValueError("Mindestens eines der PDFs ist passwortgeschuetzt")
         old_count, new_count = len(old_doc), len(new_doc)
@@ -230,8 +223,8 @@ def compare_files(baseline: Path, build: Path, folder: Path, dpi: int,
                 text_diff.extend(difflib.unified_diff(
                     old_text.splitlines(keepends=True), new_text.splitlines(keepends=True),
                     fromfile=f"referenz/Seite-{num+1}", tofile=f"kandidat/Seite-{num+1}"))
-            old_pix = old_page.get_pixmap(dpi=dpi, colorspace=fitz.csRGB, alpha=False) if old_page else None
-            new_pix = new_page.get_pixmap(dpi=dpi, colorspace=fitz.csRGB, alpha=False) if new_page else None
+            old_pix = old_page.get_pixmap(dpi=dpi, colorspace=pymupdf.csRGB, alpha=False) if old_page else None
+            new_pix = new_page.get_pixmap(dpi=dpi, colorspace=pymupdf.csRGB, alpha=False) if new_page else None
             pix_changed = None
             diff_samples = None
             if old_pix and new_pix:
@@ -257,7 +250,7 @@ def compare_files(baseline: Path, build: Path, folder: Path, dpi: int,
                         entry[attr] = name
                 if diff_samples is not None and pix_changed:
                     name = f"page-{num+1:03d}-diff.png"
-                    fitz.Pixmap(fitz.csRGB, old_pix.width, old_pix.height, diff_samples, False).save(folder / name)
+                    pymupdf.Pixmap(pymupdf.csRGB, old_pix.width, old_pix.height, diff_samples, False).save(folder / name)
                     entry["diff_image"] = name
             data["summary"]["pages_text_changed"] += int(text_changed)
             data["summary"]["pages_visual_changed"] += int(visual_changed)

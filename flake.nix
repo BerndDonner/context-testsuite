@@ -17,12 +17,12 @@
           default = pkgs.mkShell {
             packages = [ python pkgs.poppler-utils ];
             shellHook = ''
-              # Use the exact interpreter that carries PyMuPDF and pytest.
-              # An unrelated python3 earlier in PATH can lack these modules.
-              export CONTEXT_TESTSUITE_PYTHON="${python}/bin/python3"
+              # The Python environment must win over unrelated Python executables
+              # from the surrounding shell or other packages. pytest already
+              # uses this environment, and CLI subprocesses must use it too.
               export PATH="${python}/bin:$PWD/bin:$PATH"
               export PYTHONPATH="$PWD/src''${PYTHONPATH:+:$PYTHONPATH}"
-              echo "context-testsuite: 'context-testsuite list' or 'pytest -q'"
+              echo "context-testsuite: 'context-testsuite list' or 'python -m pytest -q'"
             '';
           };
         });

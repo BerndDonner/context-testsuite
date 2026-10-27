@@ -2,4 +2,4 @@
 set -euo pipefail
 root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 export PYTHONPATH="$root/src${PYTHONPATH:+:$PYTHONPATH}"
-exec "${CONTEXT_TESTSUITE_PYTHON:-python3}" -m context_testsuite "$@"
+exec python -m context_testsuite "$@"

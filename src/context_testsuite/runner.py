@@ -12,7 +12,6 @@ import shutil
 import subprocess
 import sys
 
-import fitz
 
 
 CASE_ROOT = Path(__file__).resolve().parent / "cases"
@@ -65,9 +64,10 @@ def _compile(context: str, source: Path, destination: Path) -> dict:
     pdf = destination / f"{source.stem}.pdf"
     if status == 0:
         try:
+            import pymupdf
             if not pdf.is_file():
                 raise ValueError("Output PDF was not created")
-            with fitz.open(pdf) as document:
+            with pymupdf.open(pdf) as document:
                 if document.needs_pass or len(document) == 0:
                     raise ValueError("Output PDF is encrypted or has no pages")
         except (ValueError, RuntimeError, OSError) as exc:
