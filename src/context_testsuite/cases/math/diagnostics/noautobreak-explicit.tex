@@ -1,0 +1,13 @@
+% Independent explicit penalty test, no assumption about the math penalty.
+\mainlanguage[de]
+\setuppapersize[A5]
+\starttext
+\subject{Expliziter Umbruch vor einem geschuetzten Abstand}
+\startframedtext[width=65mm]
+Die Anzeige ist \math{3\frac{1}{2}}\penalty-10000~stellig und besitzt eine Hintergrundbeleuchtung.
+\stopframedtext
+\subject{Gleicher Abstand ohne explizite Penalty}
+\startframedtext[width=65mm]
+Die Anzeige ist \math{3\frac{1}{2}}~stellig und besitzt eine Hintergrundbeleuchtung.
+\stopframedtext
+\stoptext

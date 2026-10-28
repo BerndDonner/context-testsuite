@@ -12,7 +12,7 @@ def test_generator_is_deterministic_and_isolates_experimental_probe_family():
     a = adv.probes()
     b = adv.probes()
     assert a == b
-    assert len(a) == 683
+    assert len(a) == 779
     assert len({p.id for p in a}) == len(a)
     counts = Counter(p.family for p in a)
     assert counts["glue-penalty-field"] == 138
@@ -139,7 +139,7 @@ def test_failed_shard_is_bisected_to_salvage_good_cases(tmp_path, monkeypatch):
 
 def test_hans_design_probes_preserve_original_ids_and_are_paired():
     cases = adv.probes()
-    assert len(cases) == 683
+    assert len(cases) == 779
     assert [p.id for p in cases[:450]] == [f"A{i:04}" for i in range(1, 451)]
     assert len({p.id for p in cases}) == len(cases)
     counts = Counter(p.family for p in cases)
@@ -170,3 +170,16 @@ def test_hans_design_noautobreak_penalty_limits_and_unmarked_field():
     assert any("n.penalty=500; n.options=0; node.write(n)" in p.expr for p in fields
                if p.id > "A0450")
     assert any("mathinlinepenaltyfactor=20000" in p.setup for p in fields)
+
+
+def test_real_parpass_factor_probes_are_distinct_from_primitive():
+    cases = adv.probes()
+    real = [p for p in cases if p.family == "real-parpass-math-factor"]
+    assert len(real) == 96
+    assert real[0].id == "A0684" and real[-1].id == "A0779"
+    assert {p.width for p in real} == {67, 80}
+    assert all(r"\parpasses 3" in p.setup and r"\linebreakpasses=1" in p.setup for p in real)
+    assert all(p.setup.count("mathpenaltyfactor") == 3 for p in real)
+    assert all(r"\mathinlinepenaltyfactor" not in p.setup for p in real)
+    assert all(p.expectation == "observe" for p in real)
+    assert any("n.penalty=10000; n.options=0" in p.expr for p in real)

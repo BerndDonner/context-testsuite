@@ -1,0 +1,98 @@
+[
+  {
+    "engine": "reference",
+    "id": "A0419",
+    "page": 0,
+    "joined": false
+  },
+  {
+    "engine": "reference",
+    "id": "A0452",
+    "page": 1,
+    "joined": false
+  },
+  {
+    "engine": "reference",
+    "id": "A0470",
+    "page": 2,
+    "joined": false
+  },
+  {
+    "engine": "reference",
+    "id": "A0527",
+    "page": 3,
+    "joined": false
+  },
+  {
+    "engine": "reference",
+    "id": "A0554",
+    "page": 4,
+    "joined": false
+  },
+  {
+    "engine": "reference",
+    "id": "A0590",
+    "page": 5,
+    "joined": false
+  },
+  {
+    "engine": "reference",
+    "id": "A0592",
+    "page": 6,
+    "joined": false
+  },
+  {
+    "engine": "reference",
+    "id": "A0593",
+    "page": 7,
+    "joined": false
+  },
+  {
+    "engine": "candidate",
+    "id": "A0419",
+    "page": 0,
+    "joined": true
+  },
+  {
+    "engine": "candidate",
+    "id": "A0452",
+    "page": 1,
+    "joined": true
+  },
+  {
+    "engine": "candidate",
+    "id": "A0470",
+    "page": 2,
+    "joined": false
+  },
+  {
+    "engine": "candidate",
+    "id": "A0527",
+    "page": 3,
+    "joined": true
+  },
+  {
+    "engine": "candidate",
+    "id": "A0554",
+    "page": 4,
+    "joined": true
+  },
+  {
+    "engine": "candidate",
+    "id": "A0590",
+    "page": 5,
+    "joined": false
+  },
+  {
+    "engine": "candidate",
+    "id": "A0592",
+    "page": 6,
+    "joined": true
+  },
+  {
+    "engine": "candidate",
+    "id": "A0593",
+    "page": 7,
+    "joined": true
+  }
+]

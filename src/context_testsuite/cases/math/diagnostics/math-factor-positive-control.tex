@@ -1,0 +1,61 @@
+% Positive controls for parpasses mathpenaltyfactor, not a design oracle.
+% Build with Hans and upstream: context --once math-factor-positive-control.tex
+% Inspect CTS-LB factor values in the log: some MUST be nonzero.
+% If ALL entries show factor=0, this test did not exercise the factor path.
+% A factor of 67000 turns a positive math penalty of 500 into > 10000,
+% provided the factor actually reaches the end-inline-math breakpoint.
+% This document deliberately includes glue penalties 0 and 10000 with
+% options=0, so the unmarked-field branch can be distinguished.
+% A low initial tolerance helps ensure specification subpasses are reached.
+% No framedtext: paragraph options must not be overwritten by its setup.
+\mainlanguage[de]
+\setuppapersize[A5]
+\setuplayout[width=110mm,height=175mm,backspace=15mm,topspace=12mm,header=0pt,footer=0pt]
+\starttext
+\tracingpasses=2
+\tracingparagraphs=2
+\def\CTSfactor#1#2#3#4{%
+    \subject{Factor #1, glue penalty #2, width #3mm (#4)}
+    \begingroup
+    \hsize=#3mm\relax
+    \pretolerance=0
+    \tolerance=0
+    \parpasses 2
+        tolerance 100 mathpenaltyfactor #1
+    next
+        tolerance 10000 mathpenaltyfactor #1
+    \relax
+    \linebreakpasses=1
+    \postinlinepenalty=500
+    \noindent
+    Anzeige: \math{12345}%
+    \directlua{
+        local n = node.new("glue")
+        n.width = 3 * 65536
+        n.penalty = #2
+        n.options = 0
+        texio.write_nl("term and log", "CTS-FACTOR case=#4"
+            .. " factor=" .. tostring(#1) .. " glue_penalty=" .. tostring(n.penalty)
+            .. " glue_options=" .. tostring(n.options))
+        node.write(n)
+    }%
+    stelliges Display und einen Fehler,\par
+    \endgroup
+    \blank
+}
+% Pair 1: glue_penalty 0 < math_penalty 500. Should reach factor branch.
+\CTSfactor{1000}{0}{40}{P01}
+\CTSfactor{67000}{0}{40}{P02}
+\CTSfactor{1000}{0}{54}{P03}
+\CTSfactor{67000}{0}{54}{P04}
+\CTSfactor{1000}{0}{67}{P05}
+\CTSfactor{67000}{0}{67}{P06}
+% Pair 2: inactive glue penalty 10000 > math penalty 500.
+% Hans's early-return branch is expected to bypass factor; compare.
+\CTSfactor{1000}{10000}{40}{P07}
+\CTSfactor{67000}{10000}{40}{P08}
+\CTSfactor{1000}{10000}{54}{P09}
+\CTSfactor{67000}{10000}{54}{P10}
+\CTSfactor{1000}{10000}{67}{P11}
+\CTSfactor{67000}{10000}{67}{P12}
+\stoptext

@@ -110,3 +110,31 @@ Suggested follow-up: run the same baseline against (1) Hans's engine and
 and `glue-penalty-field` that cannot be explained by explicit breakpoints or
 layout width. Don't email Hans a bare list of changed PDFs. Reduce a finding
 to a one-page `.tex` proof with matching PDFs first.
+
+## Follow-up: real paragraph-pass factors (A0684–A0779)
+
+The earlier A0630–A0683 used `\mathinlinepenaltyfactor`, which does **not**
+set the C linebreak property `properties->math_penalty_factor`. Do not use those
+results as evidence about the early-return branch in Hans's helper. The new
+96 cases activate `\parpasses 3` with the same `mathpenaltyfactor` in *every*
+subpass and `\linebreakpasses=1`, varying 250/1000/2000/12000, positive
+and negative math penalties, glue penalties, noautobreak, and frame width.
+Consult the engine logs for pass execution before drawing conclusions.
+**Total: 779 probes**; previous IDs remain unchanged.
+
+A separate diagnostic in `cases/math/diagnostics/glue-option-entry.tex`
+marks one injected glue node with a private attribute, reports its fields
+immediately after construction, and inspects them again at ConTeXt's
+`processors/after` hook (a pre-linebreak boundary). This is a read-only
+diagnostic; it doesn't change the list or register a competing linebreaker.
+The hook is still not identical to inspecting the fields inside the C routine;
+that would require engine instrumentation.
+
+Standalone, reader-friendly demonstrations are in `cases/math/diagnostics/`
+for discussion with Hans. They are **candidate examples**, not yet certified
+reproductions with the latest Hans engine.
+
+The self-test `tests/test_pdf_extraction_parity.py` checks PyMuPDF against a
+small stored corpus of real baseline/Hans PDF pages and, when installed,
+Poppler. This is evidence for a future migration, **not** a replacement for
+the production extractor.

@@ -1,0 +1,40 @@
+% C-entry diagnostic for A0590/A0592 using the separately instrumented Hans
+% engine. The previous Lua 'processors/after' callback has been removed:
+% its API was incompatible and the C trace already directly observes
+% glue options at the exact point where Hans's helper reads them.
+% Run: context --once glue-option-entry.tex 2>&1 | tee glue-trace.stdout
+% Then: grep -aE 'CTS-GLUE|CTS-LB' glue-trace.stdout
+% Match created penalty/options with following C-level haspenalty/gluepenalty.
+% The tiny width offsets remain as harmless per-case markers in the source.
+\mainlanguage[de]
+\setuppapersize[A5]
+\def\CTSglue#1#2#3{%
+    \directlua{
+        local n = node.new("glue")
+        n.width = 3 * 65536 + #3
+        n.penalty = #1
+        n.options = #2
+        texio.write_nl("term and log", "CTS-GLUE created mark=" .. tostring(#3)
+            .. " options=" .. tostring(n.options)
+            .. " penalty=" .. tostring(n.penalty)
+            .. " width=" .. tostring(n.width))
+        node.write(n)
+    }%
+}
+\starttext
+\tracingparagraphs=2 % also activates optional C-level CTS-LB trace
+\postinlinepenalty=-10000
+% Keep these four paragraphs separate: each contains exactly one marked node.
+\startframedtext[width=80mm]
+Das digitale Geraet hat ein \math{12345}\CTSglue{500}{0}{590}stelliges Display und einen Fehler.
+\stopframedtext
+\startframedtext[width=80mm]
+Das digitale Geraet hat ein \math{12345}\CTSglue{10000}{0}{592}stelliges Display und einen Fehler.
+\stopframedtext
+\startframedtext[width=80mm]
+Das digitale Geraet hat ein \math{12345}\CTSglue{10000}{1}{593}stelliges Display und einen Fehler.
+\stopframedtext
+\startframedtext[width=80mm]
+Das digitale Geraet hat ein \math{12345}\CTSglue{500}{1}{591}stelliges Display und einen Fehler.
+\stopframedtext
+\stoptext

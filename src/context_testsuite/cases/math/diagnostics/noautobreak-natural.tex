@@ -1,0 +1,30 @@
+% Reader-friendly, minimal candidates. Not yet checked against Hans's engine.
+% This file compares the natural \math{3\frac{1}{2}}~stelliges idiom with
+% ordinary glue and makes the forced-math penalty an explicit preamble switch.
+\mainlanguage[de]
+\setuppapersize[A5]
+\setuplayout[width=120mm,height=175mm]
+\starttext
+
+\subject{Geschuetzter Abstand}
+\startframedtext[width=65mm]
+Die Anzeige ist \math{3\frac{1}{2}}~stellig und besitzt eine Hintergrundbeleuchtung.
+\stopframedtext
+
+\subject{Normaler Abstand}
+\startframedtext[width=65mm]
+Die Anzeige ist \math{3\frac{1}{2}}\space stellig und besitzt eine Hintergrundbeleuchtung.
+\stopframedtext
+
+\page
+\postinlinepenalty=-10000
+\subject{Erzwungener Math-Umbruch und geschuetzter Abstand}
+\startframedtext[width=65mm]
+Die Anzeige ist \math{3\frac{1}{2}}~stellig und besitzt eine Hintergrundbeleuchtung.
+\stopframedtext
+
+\subject{Erzwungener Math-Umbruch und normaler Abstand}
+\startframedtext[width=65mm]
+Die Anzeige ist \math{3\frac{1}{2}}\space stellig und besitzt eine Hintergrundbeleuchtung.
+\stopframedtext
+\stoptext

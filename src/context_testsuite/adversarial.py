@@ -267,6 +267,32 @@ def probes() -> list[Probe]:
                         reason="Does mathinlinepenaltyfactor depend on glue field comparison and noautobreak?",
                     )
 
+    # 2026-10-28: REAL paragraph-pass factors, distinct from the primitive
+    # \mathinlinepenaltyfactor used by A0630..A0683. The C helper reads
+    # properties->math_penalty_factor, assigned by \parpasses entries.
+    # Every pass explicitly specifies the SAME factor: whichever pass yields
+    # the paragraph, the factor is not silently absent. See run logs for the
+    # actual passes taken. These are OBSERVATIONS, not a penalty oracle.
+    for width in (67, 80):
+        for factor in (250, 1000, 2000, 12000):
+            for math_penalty in (-500, 500):
+                for glue_penalty in (0, 500, 10000):
+                    for glue in ("direct-plain", "direct-protected"):
+                        setup = (
+                            r"\parpasses 3 "
+                            rf"tolerance 100 mathpenaltyfactor {factor} "
+                            rf"next tolerance 1000 mathpenaltyfactor {factor} "
+                            rf"next tolerance 10000 mathpenaltyfactor {factor} \relax "
+                            r"\linebreakpasses=1 "
+                            rf"\postinlinepenalty={math_penalty}"
+                        )
+                        design_probe(
+                            "real-parpass-math-factor", "math", glue, setup,
+                            width=width, glue_penalty=glue_penalty,
+                            pair=f"real-factor/{width}/{factor}/{math_penalty}/{glue_penalty}/{glue}",
+                            reason="Real parpasses mathpenaltyfactor; compare glue-penalty override with/without noautobreak",
+                        )
+
     assert len(cases) == len({p.id for p in cases})
     return cases
 
