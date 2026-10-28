@@ -5,6 +5,7 @@ The suite owns its inputs and expectations; no external project is imported.
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from .context_process import run_context_process
 import json
 import os
 from pathlib import Path
@@ -55,13 +56,11 @@ def _compile(context: str, source: Path, destination: Path) -> dict:
     shutil.copy2(source, destination / source.name)
     if source.name == "units-regression.tex":
         shutil.copytree(source.parent / "include", destination / "include", dirs_exist_ok=True)
-    env = os.environ.copy()
-    cache = destination / "cache-home"
-    cache.mkdir(exist_ok=True)
-    env["HOME"] = str(cache)
-    env["TEXMFCACHE"] = str(destination / "tex-cache")
     log = destination / "build.log"
-    status = _exec([context, "--once", source.name], destination, log, env)
+    status = run_context_process(context, source.name, work=destination,
+                                 home=destination / "cache-home",
+                                 tex_cache=destination / "tex-cache",
+                                 stdout_log=log, timeout=600).exit_code
     pdf = destination / f"{source.stem}.pdf"
     if status == 0:
         try:

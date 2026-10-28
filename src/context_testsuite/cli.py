@@ -28,6 +28,12 @@ def make_parser() -> argparse.ArgumentParser:
     export.add_argument("--include-baseline", action="store_true",
                         help="Include reference.pdf from a run with an explicit reference engine")
 
+    diagnostics = actions.add_parser("diagnose", help="Run a standalone diagnostic in an isolated workspace")
+    diagnostics.add_argument("--case", required=True, help="Named fixture from cases/math/diagnostics")
+    diagnostics.add_argument("--context", required=True, help="Explicitly selected (optionally instrumented) ConTeXt executable")
+    diagnostics.add_argument("--output", type=Path, required=True, help="New empty report directory")
+    diagnostics.add_argument("--timeout", type=float, default=120, help="Wall-clock limit in seconds (default 120)")
+
     suites = actions.add_parser("list", help="Describe the built-in test suites")
     suites.add_argument("--json", action="store_true", help="Machine-readable suite list")
 
@@ -53,6 +59,17 @@ def main(argv: list[str] | None = None) -> int:
             for key, description in catalog.items():
                 print(f"{key:17} {description}")
         return 0
+    if args.command == "diagnose":
+        try:
+            from .diagnostics import diagnose
+            report, folder = diagnose(args.case, args.context, args.output, timeout=args.timeout)
+        except (ValueError, OSError) as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 2
+        print(f"Diagnosis: {report['status']} (trace entries={report['trace_summary']['entries']}, "
+              f"decisions={report['trace_summary']['decisions']})")
+        print(f"Report: {folder / 'report.json'}")
+        return 0 if report["status"] == "observed" else 2
     if args.command == "export":
         try:
             from .export import export_cases

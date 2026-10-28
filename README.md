@@ -305,3 +305,44 @@ Die PDFs enthalten die **Originalseiten** des gespeicherten Testlaufs;
 zusammengestellt. Ein erneutes Kompilieren des Ausschnitts muss daher nicht
 byteidentische PDF-Dateien ergeben. Der Export selbst wertet Unterschiede
 nicht als Fehler des Satzsystems.
+
+## Math PDF observation layer (migration phase 1)
+
+`context_testsuite.math_observer` provides a shared, **PyMuPDF-only** observer
+(`observe_pdf`, `MathCase`, `MathObservation`). It checks page IDs and counts,
+recognizes a marker even if the paragraph begins on another line, and returns
+`unclassifiable` rather than guessing when extraction is ambiguous. It reports
+only *what the PDF shows*; the suites retain their separate semantic rules.
+
+The old `math-basic`, `math-extended` and `math-adversarial` execution paths
+still use their existing Poppler analyzers. Their replacement is **a separate
+phase**, after comparing historical results with the new observer; this patch
+does not silently change existing expectations or report formats.
+
+Golden test pages and synthetic corner cases cover missing/duplicated markers,
+line breaks preceding the marker, hyphenation and words extracted as a single
+token. Run `python -m pytest tests/test_math_observer.py` without Poppler.
+
+## Isolated diagnostic runs (migration phase 2)
+
+Run a named standalone `.tex` diagnostic with an **explicit** engine binary;
+compilation never happens in the tracked source folder:
+
+```sh
+context-testsuite diagnose \
+  --case glue-option-entry \
+  --context /path/to/result-context-hans-trace/bin/context \
+  --output results/diagnostics/glue-2026-10-28
+```
+
+The destination must be empty. The command retains `work/source.tex` and the
+underlying ConTeXt scratch outputs, `stdout.log`, optionally `context.log`,
+`output.pdf`, `trace.json` (including raw `CTS-LB`, `CTS-GLUE`, `CTS-FACTOR`
+events), and `report.json`. A separate `HOME` and `TEXMFCACHE` are used. The
+process group is killed on timeout (`--timeout`, default 120 seconds).
+
+`observed` means that matching C-level `CTS-LB entry` and `decision` records
+were captured, **not** that the implementation is correct. A normal engine
+without these markers yields `inconclusive` (exit status 2); compile failures
+and timeouts are also errors. The tool neither patches nor builds any engine.
+Do not run experiments with redirected output inside `cases/math/diagnostics`.
