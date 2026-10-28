@@ -71,6 +71,12 @@ context-testsuite run \
 # Nur die 76 Glue-/Penalty-Fälle
 context-testsuite run --context /pfad/context-patched --suite math-extended
 
+# Adversarial-Forschung: große, optionale Testmatrix und reproduzierbare Fälle
+context-testsuite run \
+  --baseline /pfad/context-upstream \
+  --context /pfad/context-hans \
+  --suite math-adversarial --output results/hans-adversarial
+
 # Weitere explizite historische Einheiten-Stressdokumente
 context-testsuite run --context /pfad/context-patched --suite units-stress
 ```
@@ -85,11 +91,18 @@ Build-Hook, kein Nix-Check und nicht Teil eines anderen Repositories.
 | --- | --- | --- |
 | `math-basic` | 12 Fälle aus `NixOS-Config` | No-break-Invarianten und Kontrolle unerwarteter Änderungen |
 | `math-extended` | 76 Fälle aus `NixOS-Config` | Protected Glue, Penalty `-10000`, kontrollierte Änderungen |
+| `math-adversarial` (opt-in) | generierte Parameter-Matrix | **Explorativ**: verdächtige Umbrüche, Hypothesen und vollständige Reproducer; keine automatische Interpretation jedes Unterschieds als Regression |
 | `units-smoke` | `units-regression.tex` + beide benötigten Includes | **Nur Kompilierung und gültiges PDF**, keine garantierte Typografiekorrektheit |
 | `units-stress` | drei alte Unit-Stressdokumente | **Nur Kompilierung**, explizit opt-in |
 
 `--suite all` enthält `math-basic`, `math-extended` und `units-smoke`.
 `units-stress` bleibt wegen der experimentellen historischen Herkunft opt-in.
+`math-adversarial` ist eine weitere bewusste, **nicht in `all` enthaltene**
+Untersuchung. Sie dokumentiert verifizierbare Grenzbedingungen getrennt von
+Fragen zur Priorität von expliziten Math-Penalties und `noautobreak`. Jeder
+Verdachtsfall erhält eine eigenständige kleine `.tex`-Datei, PDF-Belege und
+Textauszüge. Siehe [Adversarial-README](src/context_testsuite/cases/math/adversarial/README.md).
+Veränderte Umbrüche gegenüber einer Referenz sind allein kein Bugnachweis.
 
 **Wichtig zur Referenz:** Wird `--baseline` ausgelassen, laufen die beiden
 Math-Vergleichsskripte technisch mit **derselben Kandidatenversion auf beiden

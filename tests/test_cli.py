@@ -41,7 +41,7 @@ def test_list_command():
     assert res.returncode == 0, res.stderr
     assert res.stdout.lstrip().startswith("{"), res.stdout
     catalog = json.loads(res.stdout)
-    assert {"math-basic", "math-extended", "units-smoke", "units-stress"} == set(catalog)
+    assert {"math-basic", "math-extended", "math-adversarial", "units-smoke", "units-stress"} == set(catalog)
 
 
 def test_pdf_direct_paths(tmp_path):

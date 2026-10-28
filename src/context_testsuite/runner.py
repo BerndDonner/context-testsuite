@@ -18,6 +18,7 @@ CASE_ROOT = Path(__file__).resolve().parent / "cases"
 SUITES = {
     "math-basic": "12 math/noautobreak cases; protected breaks and change gate",
     "math-extended": "76 math penalties/glue cases with category-specific assertions",
+    "math-adversarial": "Exploratory penalty/glue grid; explicit claims, hypotheses and repros (opt-in)",
     "units-smoke": "Units and MetaPost fixture: compilation only (NOT typography correctness)",
     "units-stress": "3 archived experimental units documents: compilation only (opt-in)",
 }
@@ -91,7 +92,13 @@ def run_suites(context_arg: str, baseline_arg: str | None, suite: str, output: P
         dest = output / name
         dest.mkdir(parents=True, exist_ok=True)
         print(f"=== {name} ===", flush=True)
-        if name.startswith("math-"):
+        if name == "math-adversarial":
+            from .adversarial import run_adversarial
+            row = run_adversarial(context, baseline if baseline_arg else None, dest)
+            results.append({"suite": name, **row, "output": str(dest),
+                            "reference_context": baseline if baseline_arg else None,
+                            "candidate_context": context})
+        elif name.startswith("math-"):
             folder = CASE_ROOT / "math" / ("basic" if name == "math-basic" else "extended")
             script = folder / "compare.sh"
             # The original comparison and assertions are preserved verbatim.
@@ -124,4 +131,4 @@ def run_suites(context_arg: str, baseline_arg: str | None, suite: str, output: P
     }
     (output / "run-report.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Run report: {output / 'run-report.json'}")
-    return int(any(item["result"] == "fail" for item in results))
+    return 2 if any(item["result"] == "incomplete" for item in results) else int(any(item["result"] == "fail" for item in results))
