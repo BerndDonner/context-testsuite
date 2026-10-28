@@ -45,18 +45,14 @@ def test_semantic_claims_are_not_mistaken_for_verified_results():
 def test_pdf_text_classification_splits_and_joins(tmp_path):
     first, second = adv.probes()[0:2]
     doc = pymupdf.open()
-    for i in range(2):
+    for probe, body in [(first, "Das digitale Geraet hat ein 12345 stelliges Display"),
+                        (second, "Das digitale Geraet hat ein 12345\nstelliges Display")]:
         page = doc.new_page()
-        page.insert_text((50, 100), f"{(first, second)[i].id}")
+        page.insert_text((50, 100), probe.id + "\n" + body)
     pdf = tmp_path / "cases.pdf"
     doc.save(pdf)
     doc.close()
-    txt = tmp_path / "cases.txt"
-    txt.write_text(
-        f"{first.id}\nDas digitale Geraet hat ein 12345 stelliges Display und einen Fehler.\n\f"
-        f"{second.id}\nDas digitale Geraet hat ein 12345\n stelliges Display und einen Fehler.\n\f",
-        encoding="utf-8")
-    result = adv._extract(txt, pdf, [first, second])
+    result = adv._extract(pdf, [first, second])
     assert result[0]["status"] == "observed" and result[0]["joined"] is True
     assert result[1]["status"] == "observed" and result[1]["joined"] is False
 
@@ -67,21 +63,17 @@ def test_pdf_extraction_when_prefix_or_math_moves_to_another_line(tmp_path):
     # extractor called them "unclassifiable" despite valid PDF pages.
     by_id = {p.id: p for p in adv.probes()}
     selected = [by_id["A0394"], by_id["A0442"], by_id["A0443"]]
+    bodies = ["Das digitale Geraet hat\nein 12345 stelliges Display\nund einen Fehler.",
+              "Das digitale Geraet hat ein\n12345 stelliges Display und einen\nFehler.",
+              "Das digitale Geraet hat ein\n12345\nstelliges Display und einen\nFehler."]
     doc = pymupdf.open()
-    for p in selected:
+    for p, body in zip(selected, bodies):
         page = doc.new_page()
-        page.insert_text((50, 100), p.id)
+        page.insert_text((50, 100), p.id + "\n" + body)
     pdf = tmp_path / "cases.pdf"
     doc.save(pdf)
     doc.close()
-    txt = tmp_path / "cases.txt"
-    txt.write_text(
-        "A0394\nDas digitale Geraet hat\n ein 12345 stelliges Display\n und einen Fehler.\n\f"
-        "A0442\nDas digitale Geraet hat ein\n 12345 stelliges Display und einen\n Fehler.\n\f"
-        "A0443\nDas digitale Geraet hat ein\n 12345\n stelliges Display und einen\n Fehler.\n\f",
-        encoding="utf-8",
-    )
-    rows = adv._extract(txt, pdf, selected)
+    rows = adv._extract(pdf, selected)
     assert [r["status"] for r in rows] == ["observed"] * 3
     assert [r["joined"] for r in rows] == [True, True, False]
 

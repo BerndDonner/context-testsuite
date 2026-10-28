@@ -20,7 +20,7 @@ python -m pytest -q
 context-testsuite list
 ```
 
-Ohne Nix (Python >= 3.11, `pdftotext` für Math-Tests separat installieren):
+Ohne Nix (Python >= 3.11; keine Poppler-Abhängigkeit):
 
 ```sh
 python3 -m venv .venv
@@ -52,7 +52,7 @@ python -c 'import sys, pymupdf; print(sys.executable, pymupdf.__doc__.splitlines
 
 Aus dem Git-Arbeitsbaum geht auch `./bin/context-testsuite` ohne Installation,
 sofern Python/PyMuPDF vorhanden sind. Für Math-Tests wird zusätzlich
-`pdftotext` (Poppler) benötigt; `nix develop` liefert es mit. Für eingebaute
+PyMuPDF benötigt; `nix develop` liefert es mit. Poppler wird nicht benötigt. Für eingebaute
 ConTeXt-Tests musst du eine **ausführbare** Engine angeben. Die Python-DevShell
 stellt selbst keine bereit.
 
@@ -263,7 +263,8 @@ sobald wir dieses Repo im nächsten Migrationsschritt anpassen.
 Die Math-Checker sind unverändert migriert, um ihre bewährten Soll-Aussagen
 nicht unbemerkt zu verändern. Die 12er-Suite prüft einige Kontrollen nur als
 Differenz zur Referenz, und die 76er-Suite erfasst Zeilenumbrüche vor allem
-mit `pdftotext -layout`. Die Einheiten-Fälle besitzen noch **keine freigegebenen
+mit dem gemeinsamen PyMuPDF-Observer. Die alten Rohtexte werden nur im
+optionalen `audit-math`-Replay als gespeicherte Evidenz gelesen. Die Einheiten-Fälle besitzen noch **keine freigegebenen
 typografischen Referenzen**. Die verfügbaren Python-Tests belegen die
 Korrektheit des Testcodes für ausgewählte simulierte Fälle, ersetzen aber
 keinen echten Durchlauf gegen deine LMTX-Builds.
@@ -306,7 +307,7 @@ zusammengestellt. Ein erneutes Kompilieren des Ausschnitts muss daher nicht
 byteidentische PDF-Dateien ergeben. Der Export selbst wertet Unterschiede
 nicht als Fehler des Satzsystems.
 
-## Math PDF observation layer (migration phase 1)
+## Gemeinsamer Math-PDF-Observer
 
 `context_testsuite.math_observer` provides a shared, **PyMuPDF-only** observer
 (`observe_pdf`, `MathCase`, `MathObservation`). It checks page IDs and counts,
@@ -314,10 +315,9 @@ recognizes a marker even if the paragraph begins on another line, and returns
 `unclassifiable` rather than guessing when extraction is ambiguous. It reports
 only *what the PDF shows*; the suites retain their separate semantic rules.
 
-The old `math-basic`, `math-extended` and `math-adversarial` execution paths
-still use their existing Poppler analyzers. Their replacement is **a separate
-phase**, after comparing historical results with the new observer; this patch
-does not silently change existing expectations or report formats.
+All three math suites now use this observer. Historical gates were ported
+and verified against the archived output; see `docs/OBSERVER-MIGRATION.md`.
+The shared observations are included in schema-2 reports.
 
 Golden test pages and synthetic corner cases cover missing/duplicated markers,
 line breaks preceding the marker, hyphenation and words extracted as a single
@@ -346,3 +346,33 @@ were captured, **not** that the implementation is correct. A normal engine
 without these markers yields `inconclusive` (exit status 2); compile failures
 and timeouts are also errors. The tool neither patches nor builds any engine.
 Do not run experiments with redirected output inside `cases/math/diagnostics`.
+
+
+## Gemeinsame PDF-Auswertung ohne Poppler
+
+Alle produktiven Befehle, einschließlich der `compare.sh`-Kompatibilitätsskripte,
+verwenden PyMuPDF. Die normale DevShell enthält kein `poppler-utils` mehr.
+`--check-only` liest jetzt `before/cases.pdf` und `after/cases.pdf`.
+Die Wrapper benötigen die installierte Python-Anwendung bzw. die DevShell.
+
+Die Umstellung ist an 1734 archivierten PDF-Seiten gegengeprüft; Details,
+Abweichungserklärungen und Replay-Befehle: [OBSERVER-MIGRATION.md](docs/OBSERVER-MIGRATION.md).
+Das reguläre `python -m pytest -q` braucht weder ConTeXt noch Poppler.
+Zwei optionale historische Cross-Checks kann man bei separat installiertem
+Poppler mit `CTS_TEST_POPPLER=1 python -m pytest tests/test_pdf_extraction_parity.py -q`
+aktivieren. Sie sind kein Laufzeitbestandteil der Testsuite.
+
+## Metamorphe Tests als eigene Auswertung
+
+```bash
+context-testsuite metamorphic \
+  --from results/hans-design-v4 \
+  --output results/hans-metamorphic
+```
+
+58 explizite Beziehungen pro Engine prüfen `\relax`, unabhängige erzwungene
+Penalty-Nodes und die Hypothese zum inaktiven Glue-Penalty-Feld. Der Befehl
+wertet vorhandene adversariale Beobachtungen aus; er erzeugt keine zusätzlichen
+ConTeXt-Testfälle. Belastbare Invarianten und Designfragen bleiben getrennt.
+Erwartungen, Voraussetzungen, Ergebnisse und Exit-Codes stehen in
+[METAMORPHIC.md](docs/METAMORPHIC.md).

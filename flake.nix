@@ -15,7 +15,7 @@
         in
         {
           default = pkgs.mkShell {
-            packages = [ python pkgs.poppler-utils ];
+            packages = [ python ];
             shellHook = ''
               # The Python environment must win over unrelated Python executables
               # from the surrounding shell or other packages. pytest already

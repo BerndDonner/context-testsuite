@@ -10,10 +10,10 @@ from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 import json
-import os
 from pathlib import Path
-import re
-import subprocess
+
+from .context_process import run_context_process
+from .math_observer import MathCase, layout_key, observe_pdf
 
 
 @dataclass(frozen=True)
@@ -312,81 +312,26 @@ def _doc(group: list[Probe]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def _read_pages(pdf: Path, group: list[Probe]) -> list[dict]:
-    import pymupdf
-    with pymupdf.open(pdf) as doc:
-        if len(doc) != len(group):
-            raise ValueError(f"Expected {len(group)} PDF pages, found {len(doc)}")
-        result = []
-        for p, page in zip(group, doc):
-            # Consistent with the existing 76-case suite: pdftotext -layout.
-            # This second, independent extraction provides a diagnostic backstop
-            # if the PDF content cannot be reliably interpreted.
-            result.append({"pymupdf_excerpt": page.get_text(sort=True)[:260]})
-    return result
-
-
-def _extract(txt: Path, pdf: Path, group: list[Probe]) -> list[dict]:
-    chunks = [x for x in txt.read_text(encoding="utf-8").split("\f") if x.strip()]
-    if len(chunks) != len(group):
-        raise ValueError(f"Expected {len(group)} text pages, found {len(chunks)}")
-    extra = _read_pages(pdf, group)
-    rows = []
-    for p, chunk, fallback in zip(group, chunks, extra):
-        lines = chunk.splitlines()
-        if not any(re.search(rf"\b{re.escape(p.id)}\b", s) for s in lines):
-            raise ValueError(f"Missing page ID {p.id} in PDF text")
-        # The body prefix and math marker need not be on the same line:
-        # narrow frames and pre-inline -10000 intentionally separate them.
-        body_start = [i for i, line in enumerate(lines) if "Das digitale Geraet" in line]
-        if len(body_start) != 1:
-            rows.append({"status": "unclassifiable", "reason": "body not uniquely recognized", **fallback})
-            continue
-        body = lines[body_start[0]:]
-        marker_pattern = re.compile(rf"(?<![0-9]){re.escape(p.marker)}(?![0-9])")
-        locations = [(line, match) for line in body for match in marker_pattern.finditer(line)]
-        if len(locations) != 1:
-            rows.append({"status": "unclassifiable", "reason": "math marker not unique in body", **fallback})
-            continue
-        line, match = locations[0]
-        tail = line[match.end():]
-        # Classify the relationship immediately AFTER the formula, not a
-        # coincidental 'ste' somewhere else on the line.  'stel-' counts as
-        # joined: word hyphenation after math is a different breakpoint.
-        joined = re.match(r"\s*ste", tail) is not None
-        text = "\n".join(body).strip()
-        rows.append({"status": "observed", "joined": joined, "body": text, **fallback})
-    return rows
+def _extract(pdf: Path, group: list[Probe]) -> list[dict]:
+    return [row.as_dict() for row in observe_pdf(pdf, [MathCase(p.id, p.marker) for p in group])]
 
 
 def _compile(context: str, group: list[Probe], target: Path, cache_root: Path) -> tuple[list[dict] | None, dict]:
     target.mkdir(parents=True, exist_ok=True)
     tex = target / "cases.tex"
     tex.write_text(_doc(group), encoding="utf-8")
-    env = os.environ.copy()
-    home = cache_root / "home"
-    home.mkdir(parents=True, exist_ok=True)
-    env["HOME"] = str(home)
-    env["TEXMFCACHE"] = str(cache_root / "tex-cache")
     pdf = target / "cases.pdf"
+    pdf.unlink(missing_ok=True)
     log = target / "build.log"
     try:
-        with log.open("w", encoding="utf-8") as stream:
-            proc = subprocess.run([context, "--once", tex.name], cwd=target, env=env,
-                                  stdout=stream, stderr=subprocess.STDOUT, check=False,
-                                  timeout=600)
-        if proc.returncode:
-            return None, {"status": "compile-error", "exit_code": proc.returncode, "log": str(log)}
-        if not pdf.is_file():
-            raise ValueError("PDF missing after successful process")
-        txt = target / "cases.txt"
-        with txt.open("w", encoding="utf-8") as stream:
-            extract = subprocess.run(["pdftotext", "-layout", str(pdf), "-"],
-                                     stdout=stream, stderr=subprocess.PIPE, check=False)
-        if extract.returncode:
-            raise ValueError("pdftotext failed: " + extract.stderr.decode(errors="replace"))
-        return _extract(txt, pdf, group), {"status": "ok", "log": str(log), "pdf": str(pdf), "text": str(txt)}
-    except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+        proc = run_context_process(context, tex.name, work=target, home=cache_root / "home",
+                                   tex_cache=cache_root / "tex-cache", stdout_log=log)
+        if proc.exit_code:
+            return None, {"status": "compile-error", "exit_code": proc.exit_code,
+                          "timed_out": proc.timed_out, "log": str(log)}
+        return _extract(pdf, group), {"status": "ok", "log": str(log), "pdf": str(pdf),
+                                     "observer": "pymupdf"}
+    except (OSError, ValueError, RuntimeError) as exc:
         with log.open("a", encoding="utf-8") as stream:
             stream.write(f"\nAdversarial runner error: {exc}\n")
         return None, {"status": "harness-error", "log": str(log), "error": str(exc)}
@@ -432,7 +377,7 @@ def _interpret(p: Probe, candidate: dict | None, baseline: dict | None) -> dict:
     if baseline is not None and candidate.get("status") == baseline.get("status") == "observed":
         if candidate["joined"] != baseline["joined"]:
             flags.append("break-changed-vs-baseline")
-        elif candidate["body"] != baseline["body"]:
+        elif layout_key(candidate) != layout_key(baseline):
             flags.append("text-changed-vs-baseline")
     return {"case": asdict(p), "status": candidate["status"],
             "flags": flags, "candidate": candidate, "baseline": baseline}
@@ -448,10 +393,12 @@ def _report(out: Path, results: list[dict], shards: list[dict], candidate: str, 
     counts = Counter(flag for row in results for flag in row["flags"])
     counts["not-run"] += sum(row["status"] == "not-run" for row in results)
     counts["unclassifiable"] += sum(row["status"] == "unclassifiable" for row in results)
+    counts["reference-unclassifiable"] += sum(baseline is not None and row["baseline"] is not None
+                                                and row["baseline"]["status"] != "observed" for row in results)
     counts["reference-not-run"] += sum(baseline is not None and row["baseline"] is None for row in results)
     hard = counts["explicit-force-violation"] + counts["protected-glue-violation"]
     suspicious = counts["math-force-priority-question"] + counts["math-force-unprotected-question"]
-    report = {"schema_version": 1, "created_utc": datetime.now(timezone.utc).isoformat(),
+    report = {"schema_version": 2, "observer": "pymupdf", "created_utc": datetime.now(timezone.utc).isoformat(),
               "candidate_context": candidate, "reference_context": baseline,
               "note": "Adversarial exploration: math-force priority is a QUESTION, not a proven defect. Only explicit force/protected glue are provisional hard invariants; PDF extraction can misclassify.",
               "total": len(results), "counts": dict(counts), "hard_failures": hard,
@@ -526,7 +473,8 @@ def run_adversarial(candidate: str, baseline: str | None, output: Path, *, shard
     # Warnings and observed baseline changes are NOT made into hard failures.
     # Incomplete runs are reported as errors (not a spurious successful test).
     if (result["counts"].get("not-run", 0) or result["counts"].get("reference-not-run", 0)
-            or result["counts"].get("unclassifiable", 0)):
+            or result["counts"].get("unclassifiable", 0)
+            or result["counts"].get("reference-unclassifiable", 0)):
         return {"result": "incomplete", "exit_code": 2, "report": str(out / "observations.json")}
     if result["hard_failures"]:
         return {"result": "fail", "exit_code": 1, "report": str(out / "observations.json")}

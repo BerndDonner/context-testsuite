@@ -1,4 +1,4 @@
-"""Self-tests for the migrated, frozen math assertions (no ConTeXt needed)."""
+"""Self-tests for the frozen pre-migration oracles (saved text, no Poppler)."""
 import json
 from pathlib import Path
 import subprocess
@@ -53,7 +53,7 @@ def _check_fixture(tmp_path, *, violation=None):
     (tmp_path / "after").mkdir()
     (tmp_path / "before/cases.txt").write_text(_simulate_pages(cases), encoding="utf-8")
     (tmp_path / "after/cases.txt").write_text(_simulate_pages(cases, violation=violation), encoding="utf-8")
-    return subprocess.run([sys.executable, str(EXTENDED / "check.py"), str(tmp_path)],
+    return subprocess.run([sys.executable, str(ROOT / "tests/legacy/extended_check.py"), str(tmp_path)],
                           capture_output=True, text=True)
 
 
@@ -108,7 +108,7 @@ def test_basic_checker_accepts_12_expected_pages(tmp_path):
     for side in ("before", "after"):
         (tmp_path / side).mkdir()
         (tmp_path / side / "cases.txt").write_text(_basic_pages(), encoding="utf-8")
-    res = subprocess.run(["bash", str(BASIC / "compare.sh"), "--check-only", str(tmp_path)],
+    res = subprocess.run([sys.executable, str(ROOT / "tests/legacy/basic_check.py"), str(tmp_path)],
                          capture_output=True, text=True)
     assert res.returncode == 0, res.stdout + res.stderr
     assert "PASS:" in res.stdout
@@ -119,7 +119,7 @@ def test_basic_checker_rejects_new_unprotected_math_break(tmp_path):
         (tmp_path / side).mkdir()
         (tmp_path / side / "cases.txt").write_text(_basic_pages(violate=side == "after"),
                                                        encoding="utf-8")
-    res = subprocess.run(["bash", str(BASIC / "compare.sh"), "--check-only", str(tmp_path)],
+    res = subprocess.run([sys.executable, str(ROOT / "tests/legacy/basic_check.py"), str(tmp_path)],
                          capture_output=True, text=True)
     assert res.returncode != 0
     assert "FAIL" in res.stdout + res.stderr

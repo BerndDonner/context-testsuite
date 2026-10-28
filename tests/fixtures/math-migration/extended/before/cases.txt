@@ -1,0 +1,387 @@
+G01 Math + tilde
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+G02 Math + normal space
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+G03 Math + explicit no-break space
+
+ Das digitale Geraet hat ein 12345 stel­
+ liges Display und einen Fehler.
+G04 Math + nobreakspace
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+G05 Math + hskip 1em
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+G06 Math + thinspace
+
+ Das digitale Geraet hat ein 12345 stelliges
+ Display und einen Fehler.
+G07 Math + penalty 0
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+G08 Math + penalty 10000
+
+ Das digitale Geraet hat ein 12345stelliges
+ Display und einen Fehler.
+G09 Math + penalty -10000
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+G10 Math + penalty -10000 then tilde
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+G11 Math + kern 0 then tilde
+
+ Das digitale Geraet hat ein 12345 stel­
+ liges Display und einen Fehler.
+G12 Math + empty hbox then tilde
+
+ Das digitale Geraet hat ein 12345 stel­
+ liges Display und einen Fehler.
+G13 Math + comma and normal space
+
+ Das digitale Geraet hat ein 12345,
+ stelliges Display und einen Feh­
+ ler.
+G14 Math + stretchable hskip
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+G15 Math + enspace
+
+ Das digitale Geraet hat ein 12345 stelliges
+ Display und einen Fehler.
+G16 TeX inline math + tilde
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P01 postinlinepenalty 0
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P02 postinlinepenalty 10000
+
+ Das digitale Geraet hat ein 12345 stel­
+ liges Display und einen Fehler.
+P03 postinlinepenalty -10000
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P04 postshortinlinepenalty 0
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P05 postshortinlinepenalty 10000
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P06 mathinlinepenaltyfactor 0
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P07 mathinlinepenaltyfactor 20000
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P08 mathsurround 3pt
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P09 mathsurround 3pt ordinary space
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P10 mathsurroundskip 2pt and mode 4
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P11 mathsurroundskip 2pt and mode 4 normal
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P12 mathsurroundskip 2pt and mode 6
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P13 postinlinepenalty 10000 and ordinary space
+
+ Das digitale Geraet hat ein 12345 stel­
+ liges Display und einen Fehler.
+P14 postinlinepenalty -10000 and ordinary space
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P15 mathsurround 3pt postinlinepenalty -10000
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P16 mathsurround 3pt mathinlinepenaltyfactor 0
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P17 postshortinlinepenalty -10000, short math
+
+ Das digitale Geraet hat ein 1
+ stelliges Display und einen Feh­
+ ler.
+P18 postshortinlinepenalty -10000 ordinary
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P19 postshortinlinepenalty -10000, long math +
+tilde
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+P20 postshortinlinepenalty -10000, short math +
+normal space
+
+ Das digitale Geraet hat ein 1
+ stelliges Display und einen Feh­
+ ler.
+T01 text + tilde
+
+ Das digitale Geraet hat ein 12345 stel­
+ liges Display und einen Fehler.
+T02 text + normal space
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+T03 math + tilde with line break tolerance 10000
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+T04 math + tilde with emergency stretch
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L01 direct glue plain
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L02 direct glue noautobreak
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L03 direct glue isspace
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L04 direct glue noautobreak+isspace
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L05 direct glue nondiscardable
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L06 direct glue noautobreak+nondiscardable
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L07 direct glue setdiscardable
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L08 direct glue noautobreak+setdiscardable
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L09 direct glue limit
+
+  Das digitale Geraet hat ein 12345
+  stelliges Display und einen Feh­
+  ler.
+L10 direct glue noautobreak+limit
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L11 direct glue zero glue
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L12 direct glue zero glue noautobreak
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L13 direct glue stretchable glue
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L14 direct glue stretchable glue noautobreak
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+L15 explicit forced break then protected glue
+
+ Das digitale Geraet hat ein 12345
+
+ stelliges Display und einen Feh­
+ ler.
+L16 zero-glue noauto and mathsurround
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X01 cross math-surround 0pt / postinlinepenalty
+-10000 / glue opts 0
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X02 cross math-surround 0pt / postinlinepenalty
+-10000 / glue opts 1
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X03 cross math-surround 0pt / postinlinepenalty
+0 / glue opts 0
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X04 cross math-surround 0pt / postinlinepenalty
+0 / glue opts 1
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X05 cross math-surround 0pt / postinlinepenalty
+50 / glue opts 0
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X06 cross math-surround 0pt / postinlinepenalty
+50 / glue opts 1
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X07 cross math-surround 0pt / postinlinepenalty
+10000 / glue opts 0
+
+ Das digitale Geraet hat ein 12345 stel­
+ liges Display und einen Fehler.
+X08 cross math-surround 0pt / postinlinepenalty
+10000 / glue opts 1
+
+ Das digitale Geraet hat ein 12345 stel­
+ liges Display und einen Fehler.
+X09 cross math-surround 3pt / postinlinepenalty
+-10000 / glue opts 0
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X10 cross math-surround 3pt / postinlinepenalty
+-10000 / glue opts 1
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X11 cross math-surround 3pt / postinlinepenalty
+0 / glue opts 0
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X12 cross math-surround 3pt / postinlinepenalty
+0 / glue opts 1
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X13 cross math-surround 3pt / postinlinepenalty
+50 / glue opts 0
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X14 cross math-surround 3pt / postinlinepenalty
+50 / glue opts 1
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X15 cross math-surround 3pt / postinlinepenalty
+10000 / glue opts 0
+
+ Das digitale Geraet hat ein 12345 stel­
+ liges Display und einen Fehler.
+X16 cross math-surround 3pt / postinlinepenalty
+10000 / glue opts 1
+
+ Das digitale Geraet hat ein 12345 stel­
+ liges Display und einen Fehler.
+X17 cross mathsurroundmode 4 and glue opts 0
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X18 cross mathsurroundmode 4 and glue opts 1
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X19 cross mathsurroundmode 6 and glue opts 0
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+X20 cross mathsurroundmode 6 and glue opts 1
+
+ Das digitale Geraet hat ein 12345
+ stelliges Display und einen Feh­
+ ler.
+

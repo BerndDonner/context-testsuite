@@ -34,6 +34,16 @@ def make_parser() -> argparse.ArgumentParser:
     diagnostics.add_argument("--output", type=Path, required=True, help="New empty report directory")
     diagnostics.add_argument("--timeout", type=float, default=120, help="Wall-clock limit in seconds (default 120)")
 
+    metamorphic = actions.add_parser("metamorphic", help="Evaluate explicit relations in saved adversarial results")
+    metamorphic.add_argument("--from", dest="source_run", required=True, type=Path,
+                             help="Run root, math-adversarial directory, or observations.json")
+    metamorphic.add_argument("--output", required=True, type=Path, help="New separate report directory")
+
+    audit = actions.add_parser("audit-math", help="Replay saved Poppler observations without recompilation")
+    audit.add_argument("--suite", required=True, choices=["math-basic", "math-extended", "math-adversarial"])
+    audit.add_argument("--from", dest="source_run", required=True, type=Path, help="Old suite directory")
+    audit.add_argument("--output", required=True, type=Path, help="New audit directory outside the old suite")
+
     suites = actions.add_parser("list", help="Describe the built-in test suites")
     suites.add_argument("--json", action="store_true", help="Machine-readable suite list")
 
@@ -59,6 +69,26 @@ def main(argv: list[str] | None = None) -> int:
             for key, description in catalog.items():
                 print(f"{key:17} {description}")
         return 0
+    if args.command == "metamorphic":
+        try:
+            from .metamorphic import run
+            report = run(args.source_run, args.output)
+        except (OSError, ValueError, RuntimeError, KeyError, TypeError) as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 2
+        print(f"Metamorphic: {report['result']} ({report['counts']})")
+        print(f"Report: {args.output / 'metamorphic.md'}")
+        return report['exit_code']
+    if args.command == "audit-math":
+        try:
+            from .observer_audit import audit
+            report = audit(args.suite, args.source_run, args.output)
+        except (ValueError, OSError, RuntimeError, KeyError) as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 2
+        print(f"Observer parity: {report['counts']}")
+        print(f"Report: {args.output / 'observer-audit.json'}")
+        return report['exit_code']
     if args.command == "diagnose":
         try:
             from .diagnostics import diagnose

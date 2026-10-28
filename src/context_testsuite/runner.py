@@ -10,8 +10,6 @@ import json
 import os
 from pathlib import Path
 import shutil
-import subprocess
-import sys
 
 
 
@@ -38,16 +36,6 @@ def executable(value: str) -> str:
     if not path.is_file() or not os.access(path, os.X_OK):
         raise ValueError(f"ConTeXt executable is not executable: {path}")
     return str(path)
-
-
-def _exec(cmd: list[str], cwd: Path, log: Path, env: dict[str, str]) -> int:
-    with log.open("w", encoding="utf-8") as stream:
-        try:
-            result = subprocess.run(cmd, cwd=cwd, env=env, stdout=stream, stderr=subprocess.STDOUT, check=False)
-            return result.returncode
-        except OSError as exc:
-            stream.write(f"Cannot launch {cmd[0]}: {exc}\n")
-            return 127
 
 
 def _compile(context: str, source: Path, destination: Path) -> dict:
@@ -98,17 +86,9 @@ def run_suites(context_arg: str, baseline_arg: str | None, suite: str, output: P
                             "reference_context": baseline if baseline_arg else None,
                             "candidate_context": context})
         elif name.startswith("math-"):
-            folder = CASE_ROOT / "math" / ("basic" if name == "math-basic" else "extended")
-            script = folder / "compare.sh"
-            # The original comparison and assertions are preserved verbatim.
-            log = dest / "runner.log"
-            status = _exec(["bash", str(script), baseline, context, str(dest)], dest, log, os.environ.copy())
-            if status:
-                print(f"FAIL: {name} (see {log})", file=sys.stderr)
-            else:
-                print(f"PASS: {name} (see {log})")
-            results.append({"suite": name, "result": "pass" if status == 0 else "fail",
-                            "exit_code": status, "log": str(log), "output": str(dest),
+            from .math_suites import run_fixed
+            row = run_fixed(name, context, baseline, dest)
+            results.append({"suite": name, **row, "output": str(dest),
                             "reference_context": baseline, "candidate_context": context})
         else:
             if name == "units-smoke":

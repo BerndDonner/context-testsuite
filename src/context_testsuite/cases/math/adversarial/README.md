@@ -41,8 +41,8 @@ This is a deliberately aggressive **exploration** of Hans Hagen's 2026-10-28
 5. `observe`: No semantic oracle. A change compared to upstream is simply
    an observation, never an automatic regression claim.
 
-The checker uses `pdftotext -layout` plus a PyMuPDF page-count/extraction
-sanity check. This does **not** inspect engine nodes or prove the origin of a
+The checker uses the shared PyMuPDF observer, including page-count and
+marker/follower validation. This does **not** inspect engine nodes or prove the origin of a
 breakpoint. A visually plausible change can still be a misclassification.
 
 ## Run (inside the testsuite's `nix develop` shell)
@@ -122,19 +122,14 @@ and negative math penalties, glue penalties, noautobreak, and frame width.
 Consult the engine logs for pass execution before drawing conclusions.
 **Total: 779 probes**; previous IDs remain unchanged.
 
-A separate diagnostic in `cases/math/diagnostics/glue-option-entry.tex`
-marks one injected glue node with a private attribute, reports its fields
-immediately after construction, and inspects them again at ConTeXt's
-`processors/after` hook (a pre-linebreak boundary). This is a read-only
-diagnostic; it doesn't change the list or register a competing linebreaker.
-The hook is still not identical to inspecting the fields inside the C routine;
-that would require engine instrumentation.
+The separate `glue-option-entry.tex` diagnostic logs fields after construction.
+Its former Lua processor hook was removed. Verification at the actual C helper
+requires the instrumented engine; use the isolated `diagnose` command.
 
 Standalone, reader-friendly demonstrations are in `cases/math/diagnostics/`
 for discussion with Hans. They are **candidate examples**, not yet certified
 reproductions with the latest Hans engine.
 
-The self-test `tests/test_pdf_extraction_parity.py` checks PyMuPDF against a
-small stored corpus of real baseline/Hans PDF pages and, when installed,
-Poppler. This is evidence for a future migration, **not** a replacement for
-the production extractor.
+The self-test `tests/test_pdf_extraction_parity.py` checks real archived PDFs.
+Its optional historical Poppler cross-check needs `CTS_TEST_POPPLER=1` and a
+separately installed Poppler; production uses only the shared PyMuPDF observer.

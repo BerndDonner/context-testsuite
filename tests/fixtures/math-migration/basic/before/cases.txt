@@ -1,0 +1,60 @@
+C01 math + tilde (MUST STAY TOGETHER)
+
+ Das digitale Geraet hat ein 3 1⁄2
+ stelliges Display und einen Feh­
+ ler.
+C02 math + nonbreakablespace (MUST STAY TOG­
+ETHER)
+
+ Das digitale Geraet hat ein 3 ⁄12 stel­
+ liges Display und einen Fehler.
+C03 math + ordinary space (MAY BREAK)
+
+ Das digitale Geraet hat ein 3 1⁄2
+ stelliges Display und einen Feh­
+ ler.
+C04 plain text + tilde (MUST STAY TOGETHER)
+
+ Das digitale Geraet hat ein 3 stel­
+ liges Display und einen Fehler.
+C05 plain text + space (MAY BREAK)
+
+ Das digitale Geraet hat ein 3 stel­
+ liges Display und einen Fehler.
+C06 math + tilde with mathsurround (MUST STAY
+TOGETHER)
+
+ Das digitale Geraet hat ein 3 ⁄12
+ stelliges Display und einen Feh­
+ ler.
+C07 math + space with mathsurround (MAY BREAK)
+
+ Das digitale Geraet hat ein 3 1⁄2
+ stelliges Display und einen Feh­
+ ler.
+C08 math + nonbreakablespace with mathsurround
+(MUST STAY TOGETHER)
+
+ Das digitale Geraet hat ein 3 ⁄12 stel­
+ liges Display und einen Fehler.
+C09 math + penalty10000 and space (MUST STAY
+TOGETHER)
+
+ Das digitale Geraet hat ein 3 ⁄12stelliges
+ Display und einen Fehler.
+C10 math + penalty0 and space (MAY BREAK)
+
+ Das digitale Geraet hat ein 3 1⁄2
+ stelliges Display und einen Feh­
+ ler.
+C11 math + thinspace (NO IMPLIED SPACE BREAK)
+
+ Das digitale Geraet hat ein 3 1⁄2 stelliges
+ Display und einen Fehler.
+C12 text, math, punctuation (MAY BREAK AFTER
+COMMA)
+
+ Das digitale Geraet hat ein 3 ⁄12,
+ stelliges Display und einen Feh­
+ ler.
+

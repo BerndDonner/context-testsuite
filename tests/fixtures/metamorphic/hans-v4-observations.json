@@ -1,0 +1,2512 @@
+{
+  "schema_version": 1,
+  "candidate_context": "/nix/store/qvs62adbfrpgnr3fdv9pls3vib9p8ndj-luametatex-unstable-5751e39641a5/bin/context",
+  "reference_context": "/nix/store/l81f91apfg6kwlj94ij110dblxg78275-luametatex-unstable-5751e39641a5/bin/context",
+  "provenance": "Subset copied unchanged from hans-design-v4(1).zip, 2026-10-28; no recompilation.",
+  "cases": [
+    {
+      "case": {
+        "id": "A0451",
+        "family": "noautobreak-neighbors",
+        "math": "math",
+        "marker": "12345",
+        "glue": "normal",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\space stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/math/adjacent/normal"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0451\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0451\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0452",
+        "family": "noautobreak-neighbors",
+        "math": "math",
+        "marker": "12345",
+        "glue": "tilde",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}~stelliges",
+        "width": 67,
+        "expectation": "protect",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/math/adjacent/tilde"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0452\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0452\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0453",
+        "family": "noautobreak-neighbors",
+        "math": "math",
+        "marker": "12345",
+        "glue": "nobreakspace",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\nobreakspace stelliges",
+        "width": 67,
+        "expectation": "protect",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/math/adjacent/nobreakspace"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0453\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0453\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0454",
+        "family": "noautobreak-neighbors",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/math/adjacent/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0454\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0454\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0455",
+        "family": "noautobreak-neighbors",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "protect",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/math/adjacent/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0455\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0455\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0456",
+        "family": "noautobreak-neighbors",
+        "math": "math",
+        "marker": "12345",
+        "glue": "normal",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\relax \\space stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/math/relax/normal"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0456\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0456\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0457",
+        "family": "noautobreak-neighbors",
+        "math": "math",
+        "marker": "12345",
+        "glue": "tilde",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\relax ~stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/math/relax/tilde"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0457\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0457\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0458",
+        "family": "noautobreak-neighbors",
+        "math": "math",
+        "marker": "12345",
+        "glue": "nobreakspace",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\relax \\nobreakspace stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/math/relax/nobreakspace"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0458\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0458\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0459",
+        "family": "noautobreak-neighbors",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\relax \\directlua{local n=node.new('glue'); n.width=196608; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/math/relax/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0459\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0459\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0460",
+        "family": "noautobreak-neighbors",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\relax \\directlua{local n=node.new('glue'); n.width=196608; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/math/relax/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0460\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0460\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0474",
+        "family": "noautobreak-neighbors",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\penalty-10000 \\directlua{local n=node.new('glue'); n.width=196608; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "force-explicit",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/math/force/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0474\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0474\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0475",
+        "family": "noautobreak-neighbors",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\penalty-10000 \\directlua{local n=node.new('glue'); n.width=196608; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "force-explicit",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/math/force/direct-protected"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0475\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0475\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0476",
+        "family": "noautobreak-neighbors",
+        "math": "hbox",
+        "marker": "12345",
+        "glue": "normal",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\hbox{12345}\\space stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/hbox/adjacent/normal"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0476\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0476\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0477",
+        "family": "noautobreak-neighbors",
+        "math": "hbox",
+        "marker": "12345",
+        "glue": "tilde",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\hbox{12345}~stelliges",
+        "width": 67,
+        "expectation": "protect",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/hbox/adjacent/tilde"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0477\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0477\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0478",
+        "family": "noautobreak-neighbors",
+        "math": "hbox",
+        "marker": "12345",
+        "glue": "nobreakspace",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\hbox{12345}\\nobreakspace stelliges",
+        "width": 67,
+        "expectation": "protect",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/hbox/adjacent/nobreakspace"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0478\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0478\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0479",
+        "family": "noautobreak-neighbors",
+        "math": "hbox",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\hbox{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/hbox/adjacent/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0479\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0479\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0480",
+        "family": "noautobreak-neighbors",
+        "math": "hbox",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\hbox{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "protect",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/hbox/adjacent/direct-protected"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0480\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0480\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0481",
+        "family": "noautobreak-neighbors",
+        "math": "hbox",
+        "marker": "12345",
+        "glue": "normal",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\hbox{12345}\\relax \\space stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/hbox/relax/normal"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0481\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0481\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0482",
+        "family": "noautobreak-neighbors",
+        "math": "hbox",
+        "marker": "12345",
+        "glue": "tilde",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\hbox{12345}\\relax ~stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/hbox/relax/tilde"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0482\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0482\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0483",
+        "family": "noautobreak-neighbors",
+        "math": "hbox",
+        "marker": "12345",
+        "glue": "nobreakspace",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\hbox{12345}\\relax \\nobreakspace stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/hbox/relax/nobreakspace"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0483\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0483\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0484",
+        "family": "noautobreak-neighbors",
+        "math": "hbox",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\hbox{12345}\\relax \\directlua{local n=node.new('glue'); n.width=196608; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/hbox/relax/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0484\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0484\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0485",
+        "family": "noautobreak-neighbors",
+        "math": "hbox",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\hbox{12345}\\relax \\directlua{local n=node.new('glue'); n.width=196608; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/hbox/relax/direct-protected"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0485\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0485\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0499",
+        "family": "noautobreak-neighbors",
+        "math": "hbox",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\hbox{12345}\\penalty-10000 \\directlua{local n=node.new('glue'); n.width=196608; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "force-explicit",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/hbox/force/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0499\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0499\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0500",
+        "family": "noautobreak-neighbors",
+        "math": "hbox",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\hbox{12345}\\penalty-10000 \\directlua{local n=node.new('glue'); n.width=196608; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "force-explicit",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/hbox/force/direct-protected"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0500\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0500\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0501",
+        "family": "noautobreak-neighbors",
+        "math": "text",
+        "marker": "12345",
+        "glue": "normal",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "12345\\space stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/text/adjacent/normal"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0501\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0501\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0502",
+        "family": "noautobreak-neighbors",
+        "math": "text",
+        "marker": "12345",
+        "glue": "tilde",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "12345~stelliges",
+        "width": 67,
+        "expectation": "protect",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/text/adjacent/tilde"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0502\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0502\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0503",
+        "family": "noautobreak-neighbors",
+        "math": "text",
+        "marker": "12345",
+        "glue": "nobreakspace",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "12345\\nobreakspace stelliges",
+        "width": 67,
+        "expectation": "protect",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/text/adjacent/nobreakspace"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0503\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0503\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0504",
+        "family": "noautobreak-neighbors",
+        "math": "text",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "12345\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/text/adjacent/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0504\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0504\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0505",
+        "family": "noautobreak-neighbors",
+        "math": "text",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "12345\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "protect",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/text/adjacent/direct-protected"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0505\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0505\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0506",
+        "family": "noautobreak-neighbors",
+        "math": "text",
+        "marker": "12345",
+        "glue": "normal",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "12345\\relax \\space stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/text/relax/normal"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0506\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0506\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0507",
+        "family": "noautobreak-neighbors",
+        "math": "text",
+        "marker": "12345",
+        "glue": "tilde",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "12345\\relax ~stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/text/relax/tilde"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0507\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0507\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0508",
+        "family": "noautobreak-neighbors",
+        "math": "text",
+        "marker": "12345",
+        "glue": "nobreakspace",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "12345\\relax \\nobreakspace stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/text/relax/nobreakspace"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0508\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0508\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0509",
+        "family": "noautobreak-neighbors",
+        "math": "text",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "12345\\relax \\directlua{local n=node.new('glue'); n.width=196608; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/text/relax/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0509\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0509\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0510",
+        "family": "noautobreak-neighbors",
+        "math": "text",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "12345\\relax \\directlua{local n=node.new('glue'); n.width=196608; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/text/relax/direct-protected"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0510\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0510\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0524",
+        "family": "noautobreak-neighbors",
+        "math": "text",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "12345\\penalty-10000 \\directlua{local n=node.new('glue'); n.width=196608; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "force-explicit",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/text/force/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0524\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0524\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0525",
+        "family": "noautobreak-neighbors",
+        "math": "text",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "12345\\penalty-10000 \\directlua{local n=node.new('glue'); n.width=196608; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "force-explicit",
+        "reason": "Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+        "pair": "neighbor/text/force/direct-protected"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0525\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0525\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0582",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=-10000",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=-10000; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-10000/-10000/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0582\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0582\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0583",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=-10000",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=-10000; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-10000/-10000/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0583\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0583\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0584",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=-10000",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=-1; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-10000/-1/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0584\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0584\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0585",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=-10000",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=-1; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-10000/-1/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0585\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0585\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0586",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=-10000",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=0; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-10000/0/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0586\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0586\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0587",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=-10000",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=0; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-10000/0/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0587\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0587\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0588",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=-10000",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=1; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-10000/1/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0588\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0588\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0589",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=-10000",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=1; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-10000/1/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0589\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0589\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0590",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=-10000",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=500; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-10000/500/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0590\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0590\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0591",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=-10000",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=500; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-10000/500/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0591\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0591\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0592",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=-10000",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=10000; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-10000/10000/direct-plain"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0592\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0592\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0593",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=-10000",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=10000; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-10000/10000/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0593\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0593\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0594",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=-500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=-10000; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-500/-10000/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0594\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0594\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0595",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=-500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=-10000; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-500/-10000/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0595\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0595\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0596",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=-500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=-1; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-500/-1/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0596\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0596\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0597",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=-500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=-1; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-500/-1/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0597\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0597\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0598",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=-500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=0; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-500/0/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0598\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0598\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0599",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=-500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=0; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-500/0/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0599\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0599\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0600",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=-500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=1; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-500/1/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0600\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0600\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0601",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=-500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=1; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-500/1/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0601\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0601\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0602",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=-500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=500; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-500/500/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0602\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0602\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0603",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=-500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=500; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-500/500/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0603\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0603\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0604",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=-500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=10000; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-500/10000/direct-plain"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0604\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0604\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0605",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=-500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=10000; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/-500/10000/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0605\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0605\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0606",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=-10000; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/0/-10000/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0606\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0606\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0607",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=-10000; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/0/-10000/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0607\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0607\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0608",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=-1; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/0/-1/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0608\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0608\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0609",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=-1; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/0/-1/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0609\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0609\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0610",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=0; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/0/0/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0610\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0610\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0611",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=0; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/0/0/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0611\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0611\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0612",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=1; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/0/1/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0612\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0612\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0613",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=1; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/0/1/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0613\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0613\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0614",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=500; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/0/500/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0614\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0614\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0615",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=500; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/0/500/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0615\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0615\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0616",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=10000; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/0/10000/direct-plain"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0616\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0616\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0617",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=0",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=10000; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/0/10000/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0617\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0617\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0618",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=-10000; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/500/-10000/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0618\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0618\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0619",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=-10000; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/500/-10000/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0619\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0619\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0620",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=-1; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/500/-1/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0620\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0620\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0621",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=-1; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/500/-1/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0621\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0621\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0622",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=0; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/500/0/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0622\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0622\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0623",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=0; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/500/0/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0623\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0623\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0624",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=1; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/500/1/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0624\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0624\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0625",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=1; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/500/1/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0625\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0625\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0626",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=500; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/500/500/direct-plain"
+      },
+      "status": "observed",
+      "flags": [],
+      "candidate": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0626\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0626\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0627",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=500; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/500/500/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0627\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0627\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0628",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-plain",
+        "setup": "\\postinlinepenalty=500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=0; n.penalty=10000; n.options=0; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/500/10000/direct-plain"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0628\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0628\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    },
+    {
+      "case": {
+        "id": "A0629",
+        "family": "glue-penalty-field",
+        "math": "math",
+        "marker": "12345",
+        "glue": "direct-protected",
+        "setup": "\\postinlinepenalty=500",
+        "expr": "\\math{12345}\\directlua{local n=node.new('glue'); n.width=196608; n.options=1; n.penalty=10000; n.options=1; node.write(n)}stelliges",
+        "width": 67,
+        "expectation": "observe",
+        "reason": "Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+        "pair": "field/500/10000/direct-protected"
+      },
+      "status": "observed",
+      "flags": [
+        "break-changed-vs-baseline"
+      ],
+      "candidate": {
+        "status": "observed",
+        "joined": true,
+        "body": "Das digitale Geraet hat ein 12345 stel­\n liges Display und einen Fehler.",
+        "pymupdf_excerpt": "A0629\n\n\n  Das digitale Geraet hat ein 12345 stel­\n   liges Display und einen Fehler."
+      },
+      "baseline": {
+        "status": "observed",
+        "joined": false,
+        "body": "Das digitale Geraet hat ein 12345\n stelliges Display und einen Feh­\n ler.",
+        "pymupdf_excerpt": "A0629\n\n\n  Das digitale Geraet hat ein 12345\n   stelliges Display und einen Feh­\n   ler."
+      }
+    }
+  ]
+}

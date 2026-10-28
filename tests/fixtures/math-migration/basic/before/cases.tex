@@ -1,0 +1,82 @@
+\mainlanguage[de]
+\setuppapersize[A5]
+\setuplayout[width=110mm,height=175mm,backspace=15mm,topspace=12mm,header=0pt,footer=0pt]
+\starttext
+
+\subject{C01 math + tilde (MUST STAY TOGETHER)}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{3\frac{1}{2}}~stelliges Display und einen Fehler.
+\stopframedtext
+\page
+
+\subject{C02 math + nonbreakablespace (MUST STAY TOGETHER)}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{3\frac{1}{2}}\nonbreakablespace stelliges Display und einen Fehler.
+\stopframedtext
+\page
+
+\subject{C03 math + ordinary space (MAY BREAK)}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{3\frac{1}{2}} stelliges Display und einen Fehler.
+\stopframedtext
+\page
+
+\subject{C04 plain text + tilde (MUST STAY TOGETHER)}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein 3~stelliges Display und einen Fehler.
+\stopframedtext
+\page
+
+\subject{C05 plain text + space (MAY BREAK)}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein 3 stelliges Display und einen Fehler.
+\stopframedtext
+\page
+
+\subject{C06 math + tilde with mathsurround (MUST STAY TOGETHER)}
+\mathsurround=3pt
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{3\frac{1}{2}}~stelliges Display und einen Fehler.
+\stopframedtext
+\mathsurround=0pt
+\page
+
+\subject{C07 math + space with mathsurround (MAY BREAK)}
+\mathsurround=3pt
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{3\frac{1}{2}} stelliges Display und einen Fehler.
+\stopframedtext
+\mathsurround=0pt
+\page
+
+\subject{C08 math + nonbreakablespace with mathsurround (MUST STAY TOGETHER)}
+\mathsurround=3pt
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{3\frac{1}{2}}\nonbreakablespace stelliges Display und einen Fehler.
+\stopframedtext
+\mathsurround=0pt
+\page
+
+\subject{C09 math + penalty10000 and space (MUST STAY TOGETHER)}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{3\frac{1}{2}}\penalty10000\space stelliges Display und einen Fehler.
+\stopframedtext
+\page
+
+\subject{C10 math + penalty0 and space (MAY BREAK)}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{3\frac{1}{2}}\penalty0\space stelliges Display und einen Fehler.
+\stopframedtext
+\page
+
+\subject{C11 math + thinspace (NO IMPLIED SPACE BREAK)}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{3\frac{1}{2}}\thinspace stelliges Display und einen Fehler.
+\stopframedtext
+\page
+
+\subject{C12 text, math, punctuation (MAY BREAK AFTER COMMA)}
+\startframedtext[width=67mm]
+Das digitale Geraet hat ein \math{3\frac{1}{2}}, stelliges Display und einen Fehler.
+\stopframedtext
+\stoptext

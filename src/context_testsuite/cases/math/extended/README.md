@@ -1,9 +1,9 @@
 # Erweiterte Math-Penalty-/Glue-Regressionen (76 Fälle)
 
 Quelle: `NixOS-Config/pkgs/context/tests/math-nobreak/extended/`
-(2026-10-27). `cases.json`, `cases.tex`, `gen.py`, `check.py` und
-`compare.sh` sind **unverändert übernommen**, ebenso die zugehörigen
-Prüfkriterien. In `SOURCE-README.md` und `RESULTS-de.md` stehen die
+(2026-10-27). `cases.json` und `cases.tex` sind unverändert. Die bisherigen
+Prüfkriterien liegen nun in `math_suites.py`; `compare.sh` und `check.py`
+sind Kompatibilitätswrapper für die PDF-Auswertung. In `SOURCE-README.md` und `RESULTS-de.md` stehen die
 historischen Untersuchungsergebnisse und teils überholte Aufrufpfade;
 **die aktuelle Bedienungsanleitung ist die Repo-README**.
 
@@ -16,7 +16,8 @@ Verteilung: 35 `protected`, 25 `normal`, 11 `other`, 5 `conflict`.
   `\penalty-10000` muss brechen; genau eine zusätzliche Leerzeile der
   fehlerhaften Referenz darf verschwinden, sonst nichts.
 - `conflict`: fünf absichtlich gegensätzliche Konstrukte; **der explizite
-  erzwungene Umbruch hat Vorrang vor `noautobreak`**. P03, P15, P17,
+  erzwungene Math-Umbruch hat gemäß bisherigem Testvertrag Vorrang vor
+  `noautobreak`** (von Hans noch nicht bestätigte Designannahme). P03, P15, P17,
   X02 und X10 müssen getrennt bleiben.
 
 Besonders wichtig: **P17 testet mit `\math{1}` tatsächlich kurze
@@ -25,7 +26,7 @@ längere Fixture war ein Testfehler und wurde vor dieser Migration korrigiert.
 
 `gen.py --check` überprüft, dass der eingecheckte TeX-Fixture mit den
 76 Fallbeschreibungen übereinstimmt. `check.py` validiert vor allem den
-Zeilenumbruch per `pdftotext -layout`; Text-/Pixel-Änderungen des übrigen
+Zeilenumbruch mit dem gemeinsamen PyMuPDF-Observer; Text-/Pixel-Änderungen des übrigen
 Layouts werden nicht vollständig geprüft. Mit `--baseline` lassen sich
 zusätzliche unbeabsichtigte Änderungen erkennen.
 

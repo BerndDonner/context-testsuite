@@ -1,7 +1,8 @@
 # Math/noautobreak: 12 Ausgangstests
 
 Quelle: `NixOS-Config/pkgs/context/tests/math-nobreak/` (2026-10-27).
-Unverändert übernommene Test-Eingaben und Prüflogik: `cases.tex`, `compare.sh`.
+Unveränderte Test-Eingaben: `cases.tex`. Die Prüfkriterien wurden in
+`math_suites.py` übertragen; `compare.sh` ist ein Kompatibilitätswrapper.
 Die ursprüngliche Dokumentation mit ihrer Nix-Integration liegt in
 `SOURCE-README.md` und ist **historisch**, nicht die aktuelle Bedienungsanleitung.
 

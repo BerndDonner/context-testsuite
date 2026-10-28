@@ -7,6 +7,7 @@ hyphenated words and direct glue nodes, before any Poppler migration.
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -52,7 +53,8 @@ def test_real_pdfs_are_correctly_classified_by_pymupdf(engine: str):
             assert geometry_join == row["joined"], row
 
 
-@pytest.mark.skipif(shutil.which("pdftotext") is None, reason="Poppler not installed")
+@pytest.mark.skipif(os.environ.get("CTS_TEST_POPPLER") != "1" or shutil.which("pdftotext") is None,
+                    reason="Optional historical cross-check: CTS_TEST_POPPLER=1 and Poppler required")
 @pytest.mark.parametrize("engine", ["reference", "candidate"])
 def test_pymupdf_and_poppler_agree_on_real_goldens(engine: str):
     path = ROOT / f"{engine}.pdf"
