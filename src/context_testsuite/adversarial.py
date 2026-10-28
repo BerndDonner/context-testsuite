@@ -26,7 +26,7 @@ class Probe:
     setup: str
     expr: str
     width: int
-    expectation: str  # protect, force-explicit, force-math-question, observe
+    expectation: str  # protect, force-explicit, force-math-question, force-math-unprotected, observe
     reason: str
     pair: str = ""
 
@@ -73,7 +73,7 @@ def probes() -> list[Probe]:
             expected = "force-explicit"
         elif (r"\postinlinepenalty=-10000" in setup or
               (math == "short" and r"\postshortinlinepenalty=-10000" in setup)):
-            expected = "force-math-question" if _protected(glue) else "observe"
+            expected = "force-math-question" if _protected(glue) else "force-math-unprotected"
         elif _protected(glue) and glue_penalty is None and (
             r"\postinlinepenalty=0" in setup or not r"\postinlinepenalty=" in setup
         ) and (math != "short" or r"\postshortinlinepenalty=-10000" not in setup):
@@ -200,20 +200,24 @@ def _extract(txt: Path, pdf: Path, group: list[Probe]) -> list[dict]:
         lines = chunk.splitlines()
         if not any(re.search(rf"\b{re.escape(p.id)}\b", s) for s in lines):
             raise ValueError(f"Missing page ID {p.id} in PDF text")
-        body_start = [i for i, line in enumerate(lines) if "Das digitale Geraet hat ein" in line]
+        # The body prefix and math marker need not be on the same line:
+        # narrow frames and pre-inline -10000 intentionally separate them.
+        body_start = [i for i, line in enumerate(lines) if "Das digitale Geraet" in line]
         if len(body_start) != 1:
             rows.append({"status": "unclassifiable", "reason": "body not uniquely recognized", **fallback})
             continue
         body = lines[body_start[0]:]
-        first = body[0]
-        marker_pos = first.find(p.marker, first.index("Das digitale Geraet hat ein"))
-        if marker_pos < 0:
-            rows.append({"status": "unclassifiable", "reason": "math marker absent on first body line", **fallback})
+        marker_pattern = re.compile(rf"(?<![0-9]){re.escape(p.marker)}(?![0-9])")
+        locations = [(line, match) for line in body for match in marker_pattern.finditer(line)]
+        if len(locations) != 1:
+            rows.append({"status": "unclassifiable", "reason": "math marker not unique in body", **fallback})
             continue
-        tail = first[marker_pos + len(p.marker):]
-        # Treat a hyphenated 'ste-' on the first line as joined; don't require
-        # the entire 'stelliges' to remain there. Distinct from math marker.
-        joined = "ste" in tail
+        line, match = locations[0]
+        tail = line[match.end():]
+        # Classify the relationship immediately AFTER the formula, not a
+        # coincidental 'ste' somewhere else on the line.  'stel-' counts as
+        # joined: word hyphenation after math is a different breakpoint.
+        joined = re.match(r"\s*ste", tail) is not None
         text = "\n".join(body).strip()
         rows.append({"status": "observed", "joined": joined, "body": text, **fallback})
     return rows
@@ -285,6 +289,10 @@ def _interpret(p: Probe, candidate: dict | None, baseline: dict | None) -> dict:
         flags.append("protected-glue-violation")
     elif p.expectation == "force-math-question" and candidate["joined"]:
         flags.append("math-force-priority-question")
+    elif p.expectation == "force-math-unprotected" and candidate["joined"]:
+        # High-value case: a forced math penalty is apparently neutralized
+        # even by ordinary glue, WITHOUT a noautobreak-priority conflict.
+        flags.append("math-force-unprotected-question")
     if baseline is not None and candidate.get("status") == baseline.get("status") == "observed":
         if candidate["joined"] != baseline["joined"]:
             flags.append("break-changed-vs-baseline")
@@ -306,7 +314,7 @@ def _report(out: Path, results: list[dict], shards: list[dict], candidate: str, 
     counts["unclassifiable"] += sum(row["status"] == "unclassifiable" for row in results)
     counts["reference-not-run"] += sum(baseline is not None and row["baseline"] is None for row in results)
     hard = counts["explicit-force-violation"] + counts["protected-glue-violation"]
-    suspicious = counts["math-force-priority-question"]
+    suspicious = counts["math-force-priority-question"] + counts["math-force-unprotected-question"]
     report = {"schema_version": 1, "created_utc": datetime.now(timezone.utc).isoformat(),
               "candidate_context": candidate, "reference_context": baseline,
               "note": "Adversarial exploration: math-force priority is a QUESTION, not a proven defect. Only explicit force/protected glue are provisional hard invariants; PDF extraction can misclassify.",
@@ -320,12 +328,13 @@ def _report(out: Path, results: list[dict], shards: list[dict], candidate: str, 
         # Reproduction is generated only for positive findings.
         _write_repro(repro, Probe(**row["case"]))
     priority = ("explicit-force-violation", "protected-glue-violation",
-                "math-force-priority-question", "break-changed-vs-baseline", "text-changed-vs-baseline", "extraction-uncertain")
+                "math-force-unprotected-question", "math-force-priority-question",
+                "break-changed-vs-baseline", "text-changed-vs-baseline", "extraction-uncertain")
     sorted_cases = sorted(candidates, key=lambda row: (next((i for i, flag in enumerate(priority) if flag in row["flags"]), 99), row["case"]["id"]))
     lines = ["# Math-adversarial findings", "",
              f"Total probes: {len(results)}; incomplete: {counts['not-run']}; reference incomplete: {counts['reference-not-run']}; unclassifiable: {counts['unclassifiable']}",
              f"Strong-invariant candidates: {hard}; semantic questions: {suspicious}.", "",
-             "Interpretation: a mathematical penalty of -10000 next to noautobreak is a semantic **question** until verified with Hans; differences vs baseline are **observations**, not automatically regressions.",
+             "Interpretation: forced math penalties lost even with *ordinary, unprotected glue* are separate from the disputed noautobreak-precedence cases. Both are questions pending semantic verification; output differences alone do not establish a bug.",
              "", "## Findings (sorted by priority)", ""]
     for row in sorted_cases:
         p = row["case"]

@@ -28,11 +28,17 @@ This is a deliberately aggressive **exploration** of Hans Hagen's 2026-10-28
 2. `protect`: A glue `noautobreak` flag with no forced penalty should
    suppress that automatic break. Here a split is a plausible failure; check
    the precise node list and full PDF before reporting a bug.
-3. `force-math-question`: `\postinlinepenalty=-10000` followed by protected
+3. `force-math-unprotected`: A forced `\postinlinepenalty=-10000`
+   followed by *ordinary glue* is a particularly useful probe.  If the
+   candidate does not break there (e.g. A0419 at 80mm) but upstream does,
+   this is independent of the disputed `noautobreak` precedence.  It is
+   reported as a **high-priority semantic question**, not silently marked
+   as a proven invariant violation.  Inspect the node's actual penalty.
+4. `force-math-question`: `\postinlinepenalty=-10000` followed by protected
    glue may be logically contradictory to `noautobreak` priority. **This is
    intentionally labelled as a semantic question, not a proven bug.**
    The intended precedence needs explanation and verification by Hans.
-4. `observe`: No semantic oracle. A change compared to upstream is simply
+5. `observe`: No semantic oracle. A change compared to upstream is simply
    an observation, never an automatic regression claim.
 
 The checker uses `pdftotext -layout` plus a PyMuPDF page-count/extraction
@@ -56,8 +62,8 @@ its `repros/` directory. A missing reference is allowed, but can't reveal
 cross-version changes.
 
 An `incomplete` result (exit code 2) means an entire shard failed or its PDF
-text couldn't be classified. Inspect its build.log; don't mistake it for a
-semantic failure. Exit code 1 indicates a provisional strong-invariant
+text couldn't be classified. Inspect the extracted `cases.txt`, PDF and
+build.log; don't mistake an extraction issue for a semantic failure. Exit code 1 indicates a provisional strong-invariant
 candidate requiring manual confirmation. Exit code 0 means only that no
 classified strong-invariant violation was found; semantic questions and
 baseline differences can still be present in findings.

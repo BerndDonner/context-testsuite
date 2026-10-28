@@ -27,14 +27,17 @@ def test_semantic_claims_are_not_mistaken_for_verified_results():
     cases = adv.probes()
     protected = next(p for p in cases if p.expectation == "protect")
     force_math = next(p for p in cases if p.expectation == "force-math-question")
+    force_unprotected = next(p for p in cases if p.expectation == "force-math-unprotected")
     force_explicit = next(p for p in cases if p.expectation == "force-explicit")
     control = next(p for p in cases if p.expectation == "observe")
     joined = {"status": "observed", "joined": True, "body": "joined"}
     split = {"status": "observed", "joined": False, "body": "split"}
     assert "protected-glue-violation" in adv._interpret(protected, split, None)["flags"]
     assert "math-force-priority-question" in adv._interpret(force_math, joined, None)["flags"]
+    assert "math-force-unprotected-question" in adv._interpret(force_unprotected, joined, None)["flags"]
     assert "explicit-force-violation" in adv._interpret(force_explicit, joined, None)["flags"]
     assert adv._interpret(force_math, split, None)["flags"] == []
+    assert adv._interpret(force_unprotected, split, None)["flags"] == []
     assert adv._interpret(control, joined, split)["flags"] == ["break-changed-vs-baseline"]
     assert adv._interpret(control, joined, None)["flags"] == []
 
@@ -57,6 +60,42 @@ def test_pdf_text_classification_splits_and_joins(tmp_path):
     assert result[0]["status"] == "observed" and result[0]["joined"] is True
     assert result[1]["status"] == "observed" and result[1]["joined"] is False
 
+
+
+def test_pdf_extraction_when_prefix_or_math_moves_to_another_line(tmp_path):
+    # Both situations occurred in the real 450-probe Hans run.  The old
+    # extractor called them "unclassifiable" despite valid PDF pages.
+    by_id = {p.id: p for p in adv.probes()}
+    selected = [by_id["A0394"], by_id["A0442"], by_id["A0443"]]
+    doc = pymupdf.open()
+    for p in selected:
+        page = doc.new_page()
+        page.insert_text((50, 100), p.id)
+    pdf = tmp_path / "cases.pdf"
+    doc.save(pdf)
+    doc.close()
+    txt = tmp_path / "cases.txt"
+    txt.write_text(
+        "A0394\nDas digitale Geraet hat\n ein 12345 stelliges Display\n und einen Fehler.\n\f"
+        "A0442\nDas digitale Geraet hat ein\n 12345 stelliges Display und einen\n Fehler.\n\f"
+        "A0443\nDas digitale Geraet hat ein\n 12345\n stelliges Display und einen\n Fehler.\n\f",
+        encoding="utf-8",
+    )
+    rows = adv._extract(txt, pdf, selected)
+    assert [r["status"] for r in rows] == ["observed"] * 3
+    assert [r["joined"] for r in rows] == [True, True, False]
+
+
+def test_unprotected_negative_math_penalty_at_roomy_width_is_high_priority():
+    # This is the observed A0419 pattern.  The test verifies the reporting
+    # semantics, NOT that Hans's implementation has any particular output.
+    p = next(p for p in adv.probes() if p.id == "A0419")
+    assert p.glue == "normal" and p.width == 80
+    assert p.expectation == "force-math-unprotected"
+    joined = {"status": "observed", "joined": True, "body": "joined"}
+    split = {"status": "observed", "joined": False, "body": "split"}
+    result = adv._interpret(p, joined, split)
+    assert result["flags"] == ["math-force-unprotected-question", "break-changed-vs-baseline"]
 
 def test_report_generates_standalone_reproduction_and_does_not_upgrade_question(tmp_path):
     p = next(p for p in adv.probes() if p.expectation == "force-math-question")

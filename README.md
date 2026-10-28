@@ -102,7 +102,10 @@ Untersuchung. Sie dokumentiert verifizierbare Grenzbedingungen getrennt von
 Fragen zur Priorität von expliziten Math-Penalties und `noautobreak`. Jeder
 Verdachtsfall erhält eine eigenständige kleine `.tex`-Datei, PDF-Belege und
 Textauszüge. Siehe [Adversarial-README](src/context_testsuite/cases/math/adversarial/README.md).
-Veränderte Umbrüche gegenüber einer Referenz sind allein kein Bugnachweis.
+Insbesondere wird der Verlust einer `\postinlinepenalty=-10000` bei
+gewöhnlichem Glue gesondert von `noautobreak`-Prioritätsfragen ausgewiesen
+(z. B. A0419). Veränderte Umbrüche gegenüber einer Referenz sind allein
+kein Bugnachweis.
 
 **Wichtig zur Referenz:** Wird `--baseline` ausgelassen, laufen die beiden
 Math-Vergleichsskripte technisch mit **derselben Kandidatenversion auf beiden
