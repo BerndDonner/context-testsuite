@@ -67,3 +67,46 @@ build.log; don't mistake an extraction issue for a semantic failure. Exit code 1
 candidate requiring manual confirmation. Exit code 0 means only that no
 classified strong-invariant violation was found; semantic questions and
 baseline differences can still be present in findings.
+
+## Hans design-consistency probes (added 2026-10-28)
+
+The original **A0001–A0450 IDs remain unchanged**. A0451 onward adds four
+linked experiments, still run with `--suite math-adversarial` and still exported
+with the existing `context-testsuite export --cases ...` command.
+
+1. **`noautobreak-neighbors` (75)**: an ordinary space, `~`,
+   `\nobreakspace`, and Lua glue with option 0 or 1 after `\math{12345}`,
+   `\hbox{12345}`, or ordinary text `12345`. Compare direct adjacency,
+   `\relax`, a zero kern, an explicit `\penalty0`, and
+   `\penalty-10000`. In particular, **a break at the explicit penalty node
+   does not violate `noautobreak`**: the flag blocks *automatic glue breaks*,
+   not arbitrary explicit breakpoints. Cases containing such an intermediary
+   are **observational** except the independently forced-break cases.
+2. **`noautobreak-boundaries` (56)**: Math penalties -10000, -9999,
+   -1, 0, 1, 9999, 10000 with normal/protected glue and two widths.
+   Compare the expected `-10000` discontinuity with nearby values; deciding
+   whether Math penalties should defeat `noautobreak` is still a hypothesis.
+3. **`glue-penalty-field` (+48)**: Math penalty versus Lua `n.penalty`
+   with the `glue_option_has_penalty` option deliberately disabled:
+   `n.options` is assigned *after* `n.penalty` to keep the final options
+   at 0 or 1 even if the Lua setter changes them. In Hans's
+   helper, `glue_penalty(next)` is consulted regardless of that option.
+   Does an inactive field change the *Math* breakpoint? The field is set
+   through Lua; results must be inspected before asserting a bug.
+4. **`glue-penalty-field` (+54)**: Same field comparison together with
+   `\mathinlinepenaltyfactor`. Hans's early return may skip scaling;
+   the factor's semantics and actual effects still require verification.
+
+**Total: 683 probes.** The new field tests share the existing experimental
+shards; the original tests remain intact. New *questions* are NOT automatically
+new *hard invariant failures*. Inspect `observations.json` for comparisons
+and `case-index.json` for `pair` labels. The current reporter doesn't
+automatically group pairs, and it only checks the relationship after marker
+`12345`. Therefore compare full extracted bodies and page images for any
+interesting candidate, especially when a penalty breaks *before* the marker.
+
+Suggested follow-up: run the same baseline against (1) Hans's engine and
+(2) our patched engine, then prioritize differences in `noautobreak-neighbors`
+and `glue-penalty-field` that cannot be explained by explicit breakpoints or
+layout width. Don't email Hans a bare list of changed PDFs. Reduce a finding
+to a one-page `.tex` proof with matching PDFs first.

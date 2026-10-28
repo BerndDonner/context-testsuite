@@ -20,6 +20,14 @@ def make_parser() -> argparse.ArgumentParser:
     run.add_argument("--suite", choices=["all", *available_suites()], default="all")
     run.add_argument("--output", type=Path, default=Path("results/run"), help="Root for logs, PDFs and reports")
 
+    export = actions.add_parser("export", help="Share selected already-rendered math cases as a ZIP")
+    export.add_argument("--from", dest="source_run", type=Path, required=True,
+                        help="Existing run directory containing run-report.json")
+    export.add_argument("--cases", required=True, help="Comma-separated case IDs, in export order")
+    export.add_argument("--output", type=Path, required=True, help="New .zip file")
+    export.add_argument("--include-baseline", action="store_true",
+                        help="Include reference.pdf from a run with an explicit reference engine")
+
     suites = actions.add_parser("list", help="Describe the built-in test suites")
     suites.add_argument("--json", action="store_true", help="Machine-readable suite list")
 
@@ -44,6 +52,19 @@ def main(argv: list[str] | None = None) -> int:
         else:
             for key, description in catalog.items():
                 print(f"{key:17} {description}")
+        return 0
+    if args.command == "export":
+        try:
+            from .export import export_cases
+            case_ids = [case.strip() for case in args.cases.split(",")]
+            if any(not case for case in case_ids):
+                raise ValueError("--cases must be a comma-separated list without empty IDs")
+            export_cases(args.source_run, case_ids, args.output,
+                         include_baseline=args.include_baseline)
+        except (ValueError, OSError, RuntimeError, json.JSONDecodeError) as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 2
+        print(f"Exported {len(case_ids)} cases to {args.output}")
         return 0
     if args.command == "run":
         try:

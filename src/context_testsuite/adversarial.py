@@ -157,6 +157,116 @@ def probes() -> list[Probe]:
                 rf"\preinlinepenalty={penalty}\postinlinepenalty=0",
                 reason="Unrelated pre-inline penalty should be inspected, not inferred")
 
+    # DESIGN-2026-10-28: Comparisons rather than an assumed penalty oracle.
+    # Only fixture generation is extended here; compilation, extraction and
+    # interpretation code remain unchanged. Existing A0001..A0450 stay stable.
+    #
+    # A noautobreak glue option inhibits an *automatic glue breakpoint*; it
+    # does not logically erase an independent explicit penalty node.  Compare
+    # identical neighbors after math, an hbox, and ordinary glyphs.
+    def design_probe(family: str, source_kind: str, glue: str, setup: str,
+                     *, between: str = "", width: int = 67,
+                     glue_penalty: int | None = None, pair: str, reason: str) -> None:
+        fragments = {
+            "math": r"\math{12345}",
+            "hbox": r"\hbox{12345}",
+            "text": "12345",
+        }
+        formula = fragments[source_kind]
+        glue_expr = _glue_expr(glue, glue_penalty=glue_penalty)
+        if glue_penalty is not None:
+            # Some Lua node setters may toggle option bits. Set them AFTER the
+            # penalty field so these probes genuinely leave has_penalty unset.
+            # This is fixture generation only; existing probes are untouched.
+            final_options = 1 if glue == "direct-protected" else 0
+            glue_expr = glue_expr.replace("node.write(n)", f"n.options={final_options}; node.write(n)")
+        expr = formula + between + glue_expr + "stelliges"
+        protected = _protected(glue)
+        if between == r"\penalty-10000 ":
+            expectation = "force-explicit"
+        elif between:
+            # A preceding explicit penalty (even zero) may create its OWN
+            # breakpoint. No claim about its priority is baked into the test.
+            expectation = "observe"
+        elif source_kind != "math":
+            expectation = "protect" if protected and glue_penalty is None else "observe"
+        elif glue_penalty is not None:
+            expectation = "observe"
+        elif r"\postinlinepenalty=-10000" in setup:
+            expectation = "force-math-question" if protected else "force-math-unprotected"
+        elif protected and r"\postinlinepenalty=0" in setup:
+            expectation = "protect"
+        else:
+            expectation = "observe"
+        cases.append(Probe(
+            id=f"A{len(cases)+1:04}", family=family, math=source_kind,
+            marker="12345", glue=glue, setup=setup, expr=expr,
+            width=width, expectation=expectation, reason=reason, pair=pair,
+        ))
+
+    # 1. Control for whether the noautobreak bit acts differently immediately
+    #    after math than after a regular box or glyph.  A penalty-0 node before
+    #    protected glue tests the key distinction: no AUTO break != no break.
+    for source_kind in ("math", "hbox", "text"):
+        for intervening, between in (
+            ("adjacent", ""),
+            ("relax", r"\relax "),
+            ("kern0", r"\kern0pt\relax "),
+            ("penalty0", r"\penalty0 "),
+            ("force", r"\penalty-10000 "),
+        ):
+            for glue in ("normal", "tilde", "nobreakspace", "direct-plain", "direct-protected"):
+                design_probe(
+                    "noautobreak-neighbors", source_kind, glue,
+                    r"\postinlinepenalty=0", between=between,
+                    pair=f"neighbor/{source_kind}/{intervening}/{glue}",
+                    reason="Compare automatic glue inhibition after math, box and text; penalty nodes are independent breakpoints",
+                )
+
+    # 2. Find discontinuities at the conventional forced/forbidden values
+    #    and at their immediate neighbors.  Repeated widths distinguish
+    #    conditional line-breaking decisions from unconditional suppression.
+    for width in (67, 80):
+        for penalty in (-10000, -9999, -1, 0, 1, 9999, 10000):
+            for glue in ("normal", "tilde", "direct-plain", "direct-protected"):
+                design_probe(
+                    "noautobreak-boundaries", "math", glue,
+                    rf"\postinlinepenalty={penalty}", width=width,
+                    pair=f"boundary/{width}/{penalty}/{glue}",
+                    reason="Probe negative/positive penalty boundaries with and without glue noautobreak",
+                )
+
+    # 3. Hans's proposed helper reads glue_penalty(next) even when the node's
+    #    glue_option_has_penalty flag has not been enabled. The existing
+    #    direct Lua glue uses options=0/1, not the has_penalty option. Test
+    #    whether this *data field alone* changes behavior after inline math.
+    #    As in the first matrix, these are isolated in experimental shards.
+    for math_penalty in (-10000, -500, 0, 500):
+        for glue_penalty in (-10000, -1, 0, 1, 500, 10000):
+            for glue in ("direct-plain", "direct-protected"):
+                design_probe(
+                    "glue-penalty-field", "math", glue,
+                    rf"\postinlinepenalty={math_penalty}",
+                    glue_penalty=glue_penalty,
+                    pair=f"field/{math_penalty}/{glue_penalty}/{glue}",
+                    reason="Does an unmarked glue.penalty field affect the math breakpoint; noautobreak precedence?",
+                )
+
+    # 4. In the helper, the glue-penalty-overrides-math branch returns early,
+    #    bypassing math_penalty_factor. We do not assume a factor's meaning;
+    #    we compare its effect across both sides of the branch condition.
+    for factor in (0, 1000, 20000):
+        for math_penalty in (-1000, 0, 1000):
+            for glue_penalty in (0, 1, 2000):
+                for glue in ("direct-plain", "direct-protected"):
+                    design_probe(
+                        "glue-penalty-field", "math", glue,
+                        rf"\postinlinepenalty={math_penalty}\mathinlinepenaltyfactor={factor}",
+                        glue_penalty=glue_penalty,
+                        pair=f"factor/{math_penalty}/{glue_penalty}/{factor}/{glue}",
+                        reason="Does mathinlinepenaltyfactor depend on glue field comparison and noautobreak?",
+                    )
+
     assert len(cases) == len({p.id for p in cases})
     return cases
 

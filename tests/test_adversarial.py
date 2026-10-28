@@ -12,10 +12,10 @@ def test_generator_is_deterministic_and_isolates_experimental_probe_family():
     a = adv.probes()
     b = adv.probes()
     assert a == b
-    assert len(a) == 450
+    assert len(a) == 683
     assert len({p.id for p in a}) == len(a)
     counts = Counter(p.family for p in a)
-    assert counts["glue-penalty-field"] == 36
+    assert counts["glue-penalty-field"] == 138
     assert counts["post-short"] == 25
     assert counts["explicit-force"] == 20
     assert all(p.math == "short" and "\\postshortinlinepenalty=" in p.setup
@@ -135,3 +135,38 @@ def test_failed_shard_is_bisected_to_salvage_good_cases(tmp_path, monkeypatch):
     assert sum(row is None for row in rows) == 1
     assert info["status"] == "partial" and info["failed_cases"] == 1
     assert any(len(subgroup) == 1 for subgroup in calls)
+
+
+def test_hans_design_probes_preserve_original_ids_and_are_paired():
+    cases = adv.probes()
+    assert len(cases) == 683
+    assert [p.id for p in cases[:450]] == [f"A{i:04}" for i in range(1, 451)]
+    assert len({p.id for p in cases}) == len(cases)
+    counts = Counter(p.family for p in cases)
+    assert counts["noautobreak-neighbors"] == 75
+    assert counts["noautobreak-boundaries"] == 56
+    assert counts["glue-penalty-field"] == 138  # old 36 + new 48 + new 54
+    neighbors = [p for p in cases if p.family == "noautobreak-neighbors"]
+    assert {p.math for p in neighbors} == {"math", "hbox", "text"}
+    assert any(r"\penalty0 " in p.expr and p.expectation == "observe" for p in neighbors)
+    assert all(p.expectation == "force-explicit" for p in neighbors
+               if r"\penalty-10000 " in p.expr)
+    # No explicit force is silently interpreted as a glue-only invariant.
+    assert all(p.expectation == "observe" for p in neighbors if r"\penalty0 " in p.expr)
+
+
+def test_hans_design_noautobreak_penalty_limits_and_unmarked_field():
+    cases = adv.probes()
+    boundaries = [p for p in cases if p.family == "noautobreak-boundaries"]
+    assert {p.width for p in boundaries} == {67, 80}
+    assert all(p.expectation == "force-math-question" for p in boundaries
+               if p.glue == "direct-protected" and p.setup == r"\postinlinepenalty=-10000")
+    assert all(p.expectation == "force-math-unprotected" for p in boundaries
+               if p.glue == "direct-plain" and p.setup == r"\postinlinepenalty=-10000")
+    assert all(p.expectation == "observe" for p in boundaries
+               if p.setup == r"\postinlinepenalty=-9999")
+    fields = [p for p in cases if p.family == "glue-penalty-field"]
+    assert all(p.expectation == "observe" for p in fields if p.id > "A0450")
+    assert any("n.penalty=500; n.options=0; node.write(n)" in p.expr for p in fields
+               if p.id > "A0450")
+    assert any("mathinlinepenaltyfactor=20000" in p.setup for p in fields)

@@ -271,3 +271,37 @@ keinen echten Durchlauf gegen deine LMTX-Builds.
 Ein neues ConTeXt-Release oder einen neuen Patch darf man nicht allein anhand
 eines grünen Compiler-Smoke-Tests freigeben. Diese Suite ist deshalb ein
 bewusst gestartetes Werkzeug zur umfangreicheren Bewertung.
+
+## Einzelne Testfälle für Hans oder andere Entwickler exportieren
+
+Der Export verwendet **gespeicherte Ergebnisse eines vorhandenen Testlaufs**.
+Der Empfänger benötigt weder Nix noch Python noch die Testsuite. Es wird
+**kein ConTeXt neu gestartet**; damit lassen sich auch ausgewählte Fälle aus
+einem fachlich fehlgeschlagenen `math-extended`-Lauf verschicken.
+
+```sh
+context-testsuite export \
+  --from results/hans-adversarial-v2 \
+  --cases A0419,A0202,A0395 \
+  --include-baseline \
+  --output hans-tests.zip
+```
+
+Das ZIP enthält `README.txt`, `tests.tex` (alle ausgewählten Fälle hintereinander),
+`result.pdf` und optional `reference.pdf`. Die Reihenfolge entspricht exakt
+`--cases`. Ohne `--include-baseline` wird kein Referenz-PDF aufgenommen.
+`--include-baseline` setzt voraus, dass der ursprüngliche Testlauf eine
+**explizite** Referenz-Engine hatte (`--baseline`).
+
+Unterstützt werden `math-basic`, `math-extended` und `math-adversarial`.
+Innerhalb eines ZIP müssen die gewählten Fälle aus derselben Suite stammen.
+Die ZIP-Datei darf noch nicht existieren. Der Export prüft Original-TeX,
+PDF-Seitenanzahl und Test-ID auf **jeder** Quellseite. Fehlende, doppelte oder
+uneindeutige Zuordnungen führen zu einer Fehlermeldung, nicht zu einem
+scheinbar vollständigen Paket.
+
+Die PDFs enthalten die **Originalseiten** des gespeicherten Testlaufs;
+`tests.tex` wird aus den damals tatsächlich verwendeten Eingaben neu
+zusammengestellt. Ein erneutes Kompilieren des Ausschnitts muss daher nicht
+byteidentische PDF-Dateien ergeben. Der Export selbst wertet Unterschiede
+nicht als Fehler des Satzsystems.
