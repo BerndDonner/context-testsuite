@@ -1,0 +1,182 @@
+\mainlanguage[de]
+
+\setuplayout
+  [backspace=2.0cm,
+   height=middle,
+   width=middle,
+   leftmargin=1.8cm,
+   footerdistance=0.0cm,
+   rightmargindistance=0.2cm,
+   rightmargin=1.8cm,
+   bottom=0.5cm,
+   leftmargindistance=0.2cm,
+   header=2.1cm,
+   headerdistance=0.5cm,
+   footer=0.5cm,
+   top=0cm,
+   topspace=0.5cm,
+   bottomspace=0.0cm]
+
+\setupformulas[align=right]
+
+\definehead[exercise][subsection]
+
+\setuphead
+  [exercise]
+  [number=yes,
+   style=,
+   numberstyle=\ss\bf\tfb,
+   textstyle=\ss,
+   alternative=margin,
+   numbercommand={\determineheadnumber[subsection]\currentheadnumber\gobbleoneargument}]
+
+\setuphead
+  [chapter]
+  [number=no,
+   style=,
+   textstyle=\tfb\ss]
+
+\setuphead
+  [section]
+  [number=no,
+   style=,
+   textstyle=\tf\ss]
+
+\definemeasure[headerimageheight][\dimexpr(\headerheight-2ex)]
+
+\definelayer[sabel]
+
+\startsetups[sabel]
+
+\setlayerframed[sabel][x=0mm,y=0mm][frame=off,offset=none]
+{%
+   \setupTABLE[start][style=\tfx]
+   \setupTABLE[r][each][height=0.85\baselineskip]
+   \setupTABLE[column][1][align=right, width=.4\textwidth, loffset=-2pt, toffset=-5pt]%
+   \setupTABLE[column][2][align={center,lohi}, width=.2\textwidth]%
+   \setupTABLE[column][3][align=left, width=.4\textwidth, roffset=-2pt, toffset=-5pt]%
+   \bTABLE[frame=off]
+   \bTR \bTD Sabel-GBS       \eTD \bTD [nr=5] \dontleavehmode\externalfigure[assets/sabel.png][maxheight=\measure{headerimageheight}, frame=off]\dontleavehmode  \eTD \bTD Semester WS 2025 \eTD \eTR
+   \bTR \bTD Messtechnik     \eTD                                                                                                                                      \bTD Klasse E1A       \eTD \eTR
+   \bTR \bTD B.~Donner       \eTD                                                                                                                                      \bTD                  \eTD \eTR
+   \bTR \bTD \strut          \eTD                                                                                                                                      \bTD                  \eTD \eTR
+   \bTR \bTD 1. Schulaufgabe \eTD                                                                                                                                      \bTD 20.11.2025       \eTD \eTR
+   \eTABLE}
+
+\stopsetups
+
+\setupbackgrounds[header][text][bottomframe=on,setups=sabel,background=sabel]
+\setuppagenumbering[location=]
+
+\setupfootertexts
+  [BE: 31 Arbeitszeit: 45min][Viel Erfolg!]
+  [Viel Erfolg!][BE: 31 Arbeitszeit: 45min]
+
+
+\definedescription[example][
+  headstyle=\it, style=, align=left, location=top,
+  width=broad, margin=1cm, indenting=never, text=\hskip-1cm]
+
+% \definemathmatrix[pmatrix][
+%   left={\left(\,}, right={\,\right)}]
+
+%\usemodule[units]
+
+\definemathcommand [kgV] [nolop] {\mfunction{kg\kern-.15em\hbox{V}}}
+
+\setdigitmode 3
+
+\setupprefixtext[en][micro=μ]
+
+\starttext
+
+\exercise{Analoge und digitale Messgeräte}
+
+Ein analoges Voltmeter soll hinsichtlich der Genauigkeit mit einem digitalen
+Multimeter verglichen werden.
+Der Vergleich soll für beide Geräte in {200}\unit{micro Volt} Messbereich
+durchgeführt werden.
+Das analoge Gerät besitzt die Genauigkeitsklasse {\digits 0.5 }. Das
+digitale Gerät hat ein \math{3\frac{1}{2}}~stelliges Display und einem Fehler
+von \math{\pm(2 \%\text{v. MW} + 2 \text{Digits})}:
+
+\startitemize[a]
+\item Bei welchem Messwert haben beide Instrumente den gleichen absoluten
+Fehler (mit Herleitung!)? (BE~4)
+\item Begründen Sie, welche relativen Fehler sich bei diesem Messwert für das
+analoge und das digitale Gerät ergeben. (BE~2)
+\item Welches von beiden Geräten hat einen kleineren absoluten Fehler, wenn
+der unter a) gefundene Werte überschritten wird? Begründen Sie Ihre
+Antwort. (BE~2)
+\item Welches von beiden Geräten hat einen kleineren relativen Fehler, wenn der
+unter a) gefundene Werte überschritten wird? Begründen Sie Ihre Antwort. (BE~2)
+\stopitemize
+
+\exercise{Widerstandsmessung}
+
+Ein unbekannter Widerstand \math{R} soll durch eine Strom- und Spannungsmessung
+ermittelt werden. Verwendet werden ein Spannungsmesser mit dem Innenwiderstand
+\math{60 \unit{kilo ohm}} und ein Strommesser mit Innenwiderstand
+{\digits 300 }\unit{ohm}. Es wird eine Spannung von
+{\digits 15.3 }\unit{Volt} und ein Strom {\digits 1.65 }\unit{mA}
+gemessen. 
+
+\startitemize[a]
+\item Zeichnen Sie die spannungsrichtige {\bf und} stromrichtige Schaltung mit
+den jeweiligen Ersatzschaltbildern der verwendeten Messgeräte und beschrifte
+die Zeichung. (BE~4)
+\item Wie groß wäre der naive Widerstandswert von \math{R}? (BE~1)
+\item Wie groß wäre der wahre Widerstandswert von \math{R}, wenn diese Werte
+in der stromrichtigen Schaltung gemessen werden würden? (BE~1)
+\item Wie groß wäre der wahre Widerstandswert von \math{R}, wenn diese Werte
+in der spannungsrichtigen Schaltung gemessen werden würden? (BE~1)
+\stopitemize
+
+% \exercise{Widerstandsbestimmung}
+
+% In der folgenden Aufgabe soll ein Widerstand mit ungefähr
+% {\digits 100 }\unit{ohm} möglichst genau vermessen werden. Ihnen stehen zwei
+% Messgeräte zur Verfügung, wobei das Spannungsmessgerät einen Innenwiederstand
+% von {\digits 10 }\unit{Mega ohm}, das Strommessgerät hat in dem fraglichen
+% Messbereich einen Innenwiderstand von {\digits 1 }\unit{ohm}.\\
+% Können Sie den Widerstand genauer mit einer spannungsrichtigen oder einer
+% stromrichtigen Schaltung vermessen. Schätzen Sie die zu erwartenden Fehler in
+% beiden Schaltungen ab und begründen Sie damit Ihre Entscheidung. (BE~3)
+
+\page[yes]
+
+\exercise{Reihenschaltung von Widerständen}
+
+Ein Widerstand \math{R_1 = \text{{\digits 900 }\unit{ohm}}} mit einer relativen
+Fehlergrenze von 3\% wird mit einem weiteren Widerstand
+\math{R_2 = \text{{\digits 1.1 }\unit{kilo ohm}}} mit einer relativen
+Fehlergrenze von
+6\% in Reihe geschaltet.
+
+\startitemize[a]
+\item Wie groß ist der Gesamtwiderstand und dessen relative
+Fehlergrenze? (BE~4)
+\item Welche relative Fehlergrenze bräuchte der Widerstand \math{R_2}, wenn
+\math{R_1}, \math{R_2} und der relative Fehler von \math{R_1} unverändert
+bleiben, damit der relative Fehler des Gesamtwiderstands 2\% beträgt? (BE~3)
+\stopitemize
+
+\exercise{Leistungsmessung}
+
+Der Spannungsmesser hat einen Innenwiderstand \math{50 \unit{kilo ohm}} mit
+relativer Fehlergrenze von {\digits 0.01 }\% und der Strommesser einen
+Innenwiderstand von {\digits 15 }\unit{ohm} und relativer Fehlergrenze von
+{\digits 0.5 }\%. Es wird eine Spannung von {\digits 3.5 }\unit{Volt} mit
+relativer Fehlergrenze von 5\% und ein Strom {\digits 235 }\unit{mA} mit
+relativer Fehlergrenze von 9\% gemessen. 
+
+\startitemize[a]
+\item Zeigen Sie durch eine sorgfältige Herleitung, dass für die korrekte
+Leistung in der spannungsrichtigen Schaltung gilt:\\
+\math{P = U\cdot I - \frac{U^2}{R_{IV}}}. (BE~3)
+\item Geben Sie den absoluten Fehler auf 6 Nachkommastellen an, der sich für
+die korrekte Leistung nach der oben genannten Beziehung ergeben würde. (BE~4)
+%\item Welcher absoluter Fehler würde sich für die Leistung ergeben wenn man die Leistung nach der Formel \math{P = U^2\left(\frac{I}{U} - \frac{1}{R_{IV}}\right)} bestimmt? Ist die Beziehung falsch? Woher rührt der Unterschied? (BE~4)
+\stopitemize
+
+\stoptext
