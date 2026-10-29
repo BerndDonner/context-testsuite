@@ -5,12 +5,36 @@ PDF-Vergleicher. Die Testsuite verwendet **weder** `NixOS-Config` **noch**
 `unterrichts-texte` als Abhängigkeit. Sie nimmt ausführbare ConTeXt-Versionen
 und beliebige PDF-Pfade als Parameter entgegen.
 
-Stand der Migration: 27. Oktober 2026. Die vorhandenen Tests und ihre
-Soll-Aussagen wurden aus den beiden Projektarchiven übernommen; die
-Original-Repositories wurden **noch nicht verändert**. Hinweise zur späteren
-Bereinigung stehen in [docs/MIGRATION.md](docs/MIGRATION.md).
+Die Testsuite wurde aus früheren Projektarchiven ausgelagert. Hinweise zur
+Migration und zur Bereinigung der ursprünglichen Repositories stehen in
+[docs/MIGRATION.md](docs/MIGRATION.md).
 
-## Start
+## Schnellstart
+
+Nach der [Einrichtung](#installation-und-selbsttests) können drei voneinander
+unabhängige Funktionen verwendet werden:
+
+```sh
+# Zwei beliebige vorhandene PDFs vergleichen (ohne ConTeXt)
+context-testsuite pdf compare \
+  --reference alt.pdf --candidate neu.pdf --output results/pdf-vergleich
+
+# Historische Schulaufgaben gegen ihre feste Referenz vergleichen (mit ConTeXt)
+context-testsuite regression list
+context-testsuite regression run --context /pfad/zu/context --case all
+
+# Gezielte Math-Tests mit einer bestimmten ConTeXt-Engine ausführen
+context-testsuite run --context /pfad/zu/context --suite math-extended
+```
+
+Der freie PDF-Vergleich schreibt seinen HTML-Bericht nach
+`results/pdf-vergleich/report.html`. Die CLI gibt dafür einen direkt
+kopierbaren `xdg-open`-Befehl aus, öffnet aber keinen Browser automatisch.
+Weitere Erläuterungen: [PDF-Vergleich](#zwei-beliebige-pdfs-vergleichen),
+[Dokument-Regressionen](#dokument-regressionen-gegen-unveränderte-pdf-referenzen)
+und [eingebaute Testfälle](#eingebaute-testfälle).
+
+## Installation und Selbsttests
 
 Mit Nix (Python-DevShell, **ohne** ConTeXt-Installation):
 
@@ -197,9 +221,10 @@ werden. Die Testartefakte liegen unter `results/` und sind per
 ## Dokument-Regressionen gegen unveränderte PDF-Referenzen
 
 Jedes direkte Unterverzeichnis von [`tests/regressions/`](tests/regressions/)
-wird als Testfall erkannt. Dazu gehören die Messtechnik-Schulaufgabe sowie
-zwei Mathematik-Schulaufgaben aus 2025. Jedes Verzeichnis enthält genau eine
-`.tex`-Quelle, `reference.pdf` und eventuell benötigte Assets/Includes.
+wird als Testfall erkannt. Aktuell liegen dort vier Schulaufgaben aus 2025:
+Messtechnik, Computergestützte Messtechnik (CMT) sowie zwei
+Mathematikarbeiten. Jedes Verzeichnis enthält genau eine `.tex`-Quelle,
+`reference.pdf` und eventuell benötigte Assets/Includes.
 Weitere Dokumente sind durch Anlegen eines Verzeichnisses sofort testbar,
 ohne Registrierung in Python oder Shell-Skripte. Unvollständige Fälle werden
 **nicht stillschweigend ignoriert**, sondern als Fehler gemeldet.
@@ -226,7 +251,7 @@ Die Dokumentfälle sind bewusst **kein** automatischer Teil von `pytest` oder
 ConTeXt-Engine und dienen der manuellen Layoutanalyse. Die Referenz-PDFs
 sind historische Dateien, kein nachweislicher Output der Engine von 2024.
 
-## Spontan zwei PDFs vergleichen
+## Zwei beliebige PDFs vergleichen
 
 Das ersetzt den bisher in `unterrichts-texte` über `make compare` gestarteten
 Vergleich: **kein Make, kein Manifest, kein Export und keine Repository-Kenntnis**.
@@ -236,6 +261,14 @@ context-testsuite pdf compare \
   --reference /pfad/zu/referenz.pdf \
   --candidate /pfad/zu/neu.pdf \
   --output results/blatt1
+```
+
+Die CLI gibt einen kopierbaren `xdg-open`-Befehl mit dem absoluten Pfad
+zur HTML-Datei aus. Der Browser wird nicht automatisch gestartet.
+Alternativ kannst du im Repository direkt Folgendes aufrufen:
+
+```sh
+xdg-open results/blatt1/report.html
 ```
 
 Beispiel mit beliebigen Unterrichtsdateien:

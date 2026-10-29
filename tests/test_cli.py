@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 import os
 import subprocess
+from shlex import quote
 
 import pymupdf
 
@@ -49,7 +50,7 @@ def test_pdf_direct_paths(tmp_path):
     new = tmp_path / "current.pdf"
     _pdf(old, "before")
     _pdf(new, "after")
-    out = tmp_path / "report"
+    out = tmp_path / "report with spaces"
     res = subprocess.run(CLI + ["pdf", "compare", "--reference", str(old),
                                     "--candidate", str(new), "--output", str(out),
                                     "--dpi", "72"], capture_output=True, text=True)
@@ -58,6 +59,8 @@ def test_pdf_direct_paths(tmp_path):
     assert report["status"] == "changed"
     assert report["summary"]["pages_text_changed"] == 1
     assert (out / "report.html").is_file()
+    assert "To see the detailed side-by-side report:" in res.stdout
+    assert f"xdg-open {quote(str(out / 'report.html'))}" in res.stdout
 
 
 def test_pdf_missing_candidate_is_error(tmp_path):

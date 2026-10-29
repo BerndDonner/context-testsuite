@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from shlex import quote
 from pathlib import Path
 import shutil
 import sys
@@ -166,5 +167,6 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Changed: text={s['pages_text_changed']}, visual={s['pages_visual_changed']}, geometry={s['pages_geometry_changed']}")
         print(f"HTML: {folder / 'report.html'}")
         print(f"JSON: {folder / 'report.json'}")
+        print(f"\nTo see the detailed side-by-side report:\n  xdg-open {quote(str((folder / 'report.html').resolve()))}")
         return 0
     return 2
