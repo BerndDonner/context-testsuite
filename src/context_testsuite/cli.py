@@ -32,6 +32,10 @@ def make_parser() -> argparse.ArgumentParser:
     diagnostics.add_argument("--case", required=True, help="Named fixture from cases/math/diagnostics")
     diagnostics.add_argument("--context", required=True, help="Explicitly selected (optionally instrumented) ConTeXt executable")
     diagnostics.add_argument("--output", type=Path, required=True, help="New empty report directory")
+    diagnostics.add_argument("--observe-pages", action="store_true",
+                              help="Write page-observations.json from PDF (penalty-precedence only; no C trace needed)")
+    diagnostics.add_argument("--trace-mode", action="store_true",
+                              help="Enable the source's optional ConTeXt trace mode (requires instrumented engine for CTS-LB)")
     diagnostics.add_argument("--timeout", type=float, default=120, help="Wall-clock limit in seconds (default 120)")
 
     metamorphic = actions.add_parser("metamorphic", help="Evaluate explicit relations in saved adversarial results")
@@ -92,7 +96,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "diagnose":
         try:
             from .diagnostics import diagnose
-            report, folder = diagnose(args.case, args.context, args.output, timeout=args.timeout)
+            report, folder = diagnose(args.case, args.context, args.output, timeout=args.timeout,
+                                      observe_pages=args.observe_pages, trace_mode=args.trace_mode)
         except (ValueError, OSError) as exc:
             print(f"Error: {exc}", file=sys.stderr)
             return 2

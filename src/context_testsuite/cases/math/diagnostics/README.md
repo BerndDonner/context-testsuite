@@ -125,3 +125,62 @@ These establish two control-flow properties directly in C. They do not
 establish two independent visible typesetting bugs: 33500 and 10000 both
 prohibit a break. The previous `processors/after` Lua hook was optional
 corroboration and has been removed to avoid repeated irrelevant failures.
+
+## Six-page penalty precedence document (Hans's max-penalty discussion)
+
+`penalty-precedence.tex` has exactly six labeled cases, one **physical PDF
+page** each: P01 ordinary glue after forced math; P02 active glue penalty
+10000 after forced math; P03 an inactive stored glue penalty 10000 after
+math penalty 500; P04 the matching active glue penalty; P05 P04 plus active
+paragraph-pass `mathpenaltyfactor=67000`; P06 is the control for P03,
+with the same Math penalty 500, glue width 3pt and options 0, but the
+stored glue penalty changed from 10000 to 0. P06 is appended so P01--P05
+retain their original page numbers. For the factor case the paragraph
+parameters are applied inside the paragraph's own group, without framedtext.
+
+The P03/P06 pair tests whether changing an *inactive* penalty field
+changes the output. The hypothesis that it should not is a design
+question for Hans, not an asserted ConTeXt contract.
+
+The point is to separate the *observed* line breaks from the question of
+which precedence rules are correct. The PDF is the primary automated output;
+C tracing is optional and only explains the implementation's path.
+
+From the testsuite root, using either normal or instrumented ConTeXt:
+
+```sh
+context-testsuite diagnose \
+  --case penalty-precedence \
+  --context /path/to/result-context-hans/bin/context \
+  --output results/diagnostics/penalty-hans \
+  --observe-pages
+```
+
+In addition to the **unchanged default** `report.json`, `trace.json`,
+`stdout.log` and `output.pdf`, this writes `page-observations.json` with a
+strict page-to-case mapping and join/split/layout information. Without a
+C trace, an entirely classified 6-page PDF is marked `observed` (not
+`passed`: no desired penalty semantics have been asserted). An extra or
+missing PDF page is an error rather than silently shifting case IDs.
+
+If the instrumented engine is available, add `--trace-mode` to the above
+command. This adds `--mode=trace` to ConTeXt, enabling the existing
+`CTS-LB` messages via `\tracingparagraphs=2`; it does **not** change the
+format of those messages or require tracing for PDF analysis. The existing
+`trace.json` then contains those events as before.
+
+A standalone manual run also works:
+
+```sh
+/path/to/context --once penalty-precedence.tex
+/path/to/context --once --mode=trace penalty-precedence.tex
+```
+
+Do not launch the standalone command in the tracked source directory when
+collecting results. Prefer `diagnose`, which isolates the workspace.
+
+**Known limitation:** This file is new and has not yet been compiled against
+Hans's ConTeXt installation in this environment; check for six rendered
+pages. A nonzero C-level factor on P05 is a separate trace-based validity
+check. A correct PDF observation alone does not prove that the factor was
+used by the engine.

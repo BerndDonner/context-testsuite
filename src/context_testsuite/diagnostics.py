@@ -60,9 +60,12 @@ def parse_trace(stdout: str) -> dict:
                         "complete_c_trace": complete}}
 
 
-def diagnose(case: str, context_arg: str, output: Path, *, timeout: float = 120) -> tuple[dict, Path]:
+def diagnose(case: str, context_arg: str, output: Path, *, timeout: float = 120,
+             observe_pages: bool = False, trace_mode: bool = False) -> tuple[dict, Path]:
     if case not in available_diagnostics():
         raise ValueError(f"Unknown diagnostic {case!r}; choose from: {', '.join(available_diagnostics())}")
+    if observe_pages and case != "penalty-precedence":
+        raise ValueError("--observe-pages is currently supported only for penalty-precedence")
     context = executable(context_arg)
     if timeout <= 0:
         raise ValueError("--timeout must be positive")
@@ -81,7 +84,8 @@ def diagnose(case: str, context_arg: str, output: Path, *, timeout: float = 120)
     result = run_context_process(context, "source.tex", work=work,
                                  home=target / "cache" / "home",
                                  tex_cache=target / "cache" / "tex",
-                                 stdout_log=stdout_log, timeout=timeout)
+                                 stdout_log=stdout_log, timeout=timeout,
+                                 extra_args=("--mode=trace",) if trace_mode else ())
     content = stdout_log.read_text(encoding="utf-8", errors="replace")
     trace = parse_trace(content)
     (target / "trace.json").write_text(json.dumps(trace, indent=2) + "\n", encoding="utf-8")
@@ -100,11 +104,22 @@ def diagnose(case: str, context_arg: str, output: Path, *, timeout: float = 120)
             shutil.copyfile(actual_pdf, target / "output.pdf")
         except (ValueError, OSError, RuntimeError) as exc:
             pdf_issue = str(exc)
+    page_observations = None
+    if observe_pages and result.exit_code == 0 and pdf_issue is None and not result.timed_out:
+        from .diagnostic_observations import observe_diagnostic_pdf
+        try:
+            page_observations = observe_diagnostic_pdf(case, actual_pdf)
+            (target / "page-observations.json").write_text(
+                json.dumps(page_observations, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        except (ValueError, OSError, RuntimeError) as exc:
+            pdf_issue = f"Cannot observe diagnostic pages: {exc}"
     if result.timed_out:
         status = "timeout"
     elif result.exit_code != 0 or pdf_issue:
         status = "compile_error"
-    elif trace["summary"]["complete_c_trace"]:
+    elif (trace["summary"]["complete_c_trace"] or
+          (observe_pages and page_observations is not None and
+           page_observations["summary"]["unclassifiable"] == 0)):
         status = "observed"
     else:
         status = "inconclusive"
@@ -116,5 +131,10 @@ def diagnose(case: str, context_arg: str, output: Path, *, timeout: float = 120)
               "timed_out": result.timed_out, "pdf_issue": pdf_issue,
               "trace_summary": trace["summary"],
               "note": "Trace observation, not a claim about penalty semantics. Missing/incomplete CTS-LB trace is inconclusive."}
+    if observe_pages:
+        report["page_observations"] = (page_observations["summary"] if page_observations
+                                       else {"status": "unavailable"})
+        report["note"] = ("PDF observation is descriptive, not a penalty-precedence assertion. "
+                          "C tracing is optional; if requested, see trace.json.")
     (target / "report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     return report, target

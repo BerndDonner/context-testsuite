@@ -1,0 +1,82 @@
+% Hans's max-penalty rule: six independent, machine-readable PDF pages.
+% Each page contains exactly one paragraph with math marker 12345 and
+% following word "stelliges". The paragraph is intentionally unboxed:
+% framedtext would interfere with the paragraph-pass factor experiment.
+%
+% Plain engine:   context --once penalty-precedence.tex
+% Optional C trace: context --once --mode=trace penalty-precedence.tex
+% (The trace mode only activates \tracingparagraphs; no source change.)
+% Results are observations, NOT assertions about the correct precedence.
+\mainlanguage[de]
+\setuppapersize[A5]
+\setuplayout[width=110mm,height=175mm,backspace=15mm,
+  topspace=12mm,header=0pt,footer=0pt]
+
+% Explicit mode: normal output and previous CTS-LB trace messages unchanged.
+\doifmode{trace}{\tracingparagraphs=2}
+
+% P03/P06 isolate the stored penalty field with glue options fixed at zero.
+\def\CTSinactiveglue#1{%
+  \directlua{
+    local n = node.new("glue")
+    n.width = 3 * 65536
+    n.penalty = #1
+    n.options = 0
+    node.write(n)
+  }%
+}
+
+% #1 = case ID, #2 = heading, #3 = math penalty,
+% #4 = following glue, #5 = paragraph setup (empty except in P05).
+\long\def\CTScase#1#2#3#4#5{%
+  \subject{#1: #2}
+  \begingroup
+    \hsize=54mm\relax
+    \postinlinepenalty=#3\relax
+    #5%
+    \noindent Das digitale Geraet hat ein \math{12345}%
+    #4% note: glue is adjacent to the end-math node
+    stelliges Display und einen Fehler.\par
+  \endgroup
+}
+
+\starttext
+% P01: Is an ordinary unprotected space a competing penalty of zero?
+\CTScase{P01}{Forced math / ordinary glue}{-10000}{\space}{}
+\page
+
+% P02: Both penalties deliberately active; 10000 should compete with -10000.
+\CTScase{P02}{Forced math / active glue penalty}{-10000}%
+  {\hskip 3pt penalty10000\relax}{}
+\page
+
+% P03: Deliberate internal invariant probe: the glue has a penalty field,
+% but its glue_option_has_penalty flag is OFF.
+\CTScase{P03}{Math 500 / inactive glue field}{500}{\CTSinactiveglue{10000}}{}
+\page
+
+% P04: The matched control uses a genuine, activated glue penalty.
+\CTScase{P04}{Math 500 / active glue penalty}{500}%
+  {\hskip 3pt penalty10000\relax}{}
+\page
+
+% P05: Matched to P04, except for an active paragraph-pass math factor.
+% These settings must remain INSIDE the paragraph, not in framedtext.
+% A factor of 67000 scales 500 to 33500 if that branch is reached.
+\CTScase{P05}{Math 500 / active glue / factor 67000}{500}%
+  {\hskip 3pt penalty10000\relax}%
+  {\pretolerance=0 \tolerance=0
+   \parpasses 2
+      tolerance 100 mathpenaltyfactor 67000
+   next
+      tolerance 10000 mathpenaltyfactor 67000
+   \relax
+   \linebreakpasses=1 }
+\page
+
+% P06: Direct P03 control: identical glue node except for stored penalty.
+% options=0 and width=3pt in both cases; only penalty 10000 -> 0 changes.
+% Appended to preserve the established P01--P05 page numbers.
+\CTScase{P06}{Math 500 / inactive glue field 0}{500}%
+  {\CTSinactiveglue{0}}{}
+\stoptext
