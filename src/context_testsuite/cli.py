@@ -60,11 +60,35 @@ def make_parser() -> argparse.ArgumentParser:
     comp.add_argument("--dpi", type=int, default=144, help="Raster DPI (72..300)")
     comp.add_argument("--pixel-threshold", type=int, default=16, help="RGB threshold (0..254)")
 
+    regression = actions.add_parser("regression", help="Compare frozen document cases to their reference PDFs")
+    regression_actions = regression.add_subparsers(dest="regression_command", required=True)
+    regression_actions.add_parser("list", help="List cases discovered under tests/regressions/")
+    document_run = regression_actions.add_parser("run", help="Compile candidates and compare with frozen references")
+    document_run.add_argument("--context", required=True, help="Candidate ConTeXt executable (path or PATH command)")
+    document_run.add_argument("--case", default="all", help="Case directory name, or all (default)")
+    document_run.add_argument("--output", type=Path, default=Path("results"), help="Result root (default: results)")
+    document_run.add_argument("--timeout", type=float, default=600, help="ConTeXt timeout in seconds per case")
+    document_run.add_argument("--dpi", type=int, default=144, help="PDF comparison raster DPI (72..300)")
+    document_run.add_argument("--pixel-threshold", type=int, default=16, help="RGB difference threshold (0..254)")
+
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = make_parser().parse_args(argv)
+    if args.command == "regression":
+        try:
+            from .document_regressions import case_names, run_regressions
+            if args.regression_command == "list":
+                for name in case_names():
+                    print(name)
+                return 0
+            return run_regressions(args.context, args.case, args.output,
+                                   timeout=args.timeout, dpi=args.dpi,
+                                   pixel_threshold=args.pixel_threshold)
+        except (ValueError, OSError, RuntimeError) as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 2
     if args.command == "list":
         catalog = available_suites(description=True)
         if args.json:

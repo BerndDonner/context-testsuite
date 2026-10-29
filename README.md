@@ -194,6 +194,38 @@ Testsuite dürfen die alten Math-Checks im anderen Repository entfernt
 werden. Die Testartefakte liegen unter `results/` und sind per
 `.gitignore` ausgeschlossen.
 
+## Dokument-Regressionen gegen unveränderte PDF-Referenzen
+
+Jedes direkte Unterverzeichnis von [`tests/regressions/`](tests/regressions/)
+wird als Testfall erkannt. Dazu gehören die Messtechnik-Schulaufgabe sowie
+zwei Mathematik-Schulaufgaben aus 2025. Jedes Verzeichnis enthält genau eine
+`.tex`-Quelle, `reference.pdf` und eventuell benötigte Assets/Includes.
+Weitere Dokumente sind durch Anlegen eines Verzeichnisses sofort testbar,
+ohne Registrierung in Python oder Shell-Skripte. Unvollständige Fälle werden
+**nicht stillschweigend ignoriert**, sondern als Fehler gemeldet.
+
+```sh
+context-testsuite regression list
+context-testsuite regression run \
+  --context ../NixOS-Config/result-context-patched/bin/context --case all
+context-testsuite regression run \
+  --context ../NixOS-Config/result-context-patched/bin/context --case messtechnik-ws25
+```
+
+Die Quellen und Referenzen werden nicht modifiziert; nur der Kandidat wird
+gebaut. Die HTML-Vergleiche entstehen in `results/<case>/comparison/report.html`,
+der Gesamtbericht in `results/regression-report.json`. Zur Anzeige erscheint
+jeweils eine kopierbare Zeile `xdg-open /absoluter/pfad/report.html`.
+Unterschiede (`changed`) sind ein Befund und **kein automatischer FAIL**.
+Kompilier-/Vergleichsfehler führen zu Exitcode 2. Details einschließlich
+Hinweisen zum Hinzufügen von Tests stehen in
+[`tests/regressions/README.md`](tests/regressions/README.md).
+
+Die Dokumentfälle sind bewusst **kein** automatischer Teil von `pytest` oder
+`context-testsuite run --suite all`: Sie benötigen eine explizit gewählte
+ConTeXt-Engine und dienen der manuellen Layoutanalyse. Die Referenz-PDFs
+sind historische Dateien, kein nachweislicher Output der Engine von 2024.
+
 ## Spontan zwei PDFs vergleichen
 
 Das ersetzt den bisher in `unterrichts-texte` über `make compare` gestarteten

@@ -1,0 +1,147 @@
+\mainlanguage[de]
+
+\setuplayout
+  [backspace=2.0cm,
+   height=middle,
+   width=middle,
+   leftmargin=1.8cm,
+   footerdistance=0.0cm,
+   rightmargindistance=0.2cm,
+   rightmargin=1.8cm,
+   bottom=0.5cm,
+   leftmargindistance=0.2cm,
+   header=2.1cm,
+   headerdistance=0.5cm,
+   footer=0.5cm,
+   top=0cm,
+   topspace=0.5cm,
+   bottomspace=0.0cm]
+
+\setupformulas[align=right]
+
+\definehead[exercise][subsection]
+
+\setuphead
+  [exercise]
+  [number=yes,
+   style=,
+   numberstyle=\ss\bf\tfb,
+   textstyle=\ss,
+   alternative=margin,
+   numbercommand={\determineheadnumber[subsection]\currentheadnumber\gobbleoneargument}]
+
+\setuphead
+  [chapter]
+  [number=no,
+   style=,
+   textstyle=\tfb\ss]
+
+\setuphead
+  [section]
+  [number=no,
+   style=,
+   textstyle=\tf\ss]
+
+\definemeasure[headerimageheight][\dimexpr(\headerheight-2ex)]
+
+\definelayer[sabel]
+
+\startsetups[sabel]
+
+\setlayerframed[sabel][x=0mm,y=0mm][frame=off,offset=none]
+{%
+   \setupTABLE[start][style=\tfx]
+   \setupTABLE[r][each][height=0.85\baselineskip]
+   \setupTABLE[column][1][align=right, width=.4\textwidth, loffset=-2pt, toffset=-5pt]%
+   \setupTABLE[column][2][align={center,lohi}, width=.2\textwidth]%
+   \setupTABLE[column][3][align=left, width=.4\textwidth, roffset=-2pt, toffset=-5pt]%
+   \bTABLE[frame=off]
+   \bTR \bTD Sabel-GBS       \eTD \bTD [nr=5] \dontleavehmode\externalfigure[assets/sabel.png][maxheight=\measure{headerimageheight}, frame=off]\dontleavehmode \eTD \bTD Schuljahr 2025/26 \eTD \eTR
+   \bTR \bTD Mathematik      \eTD                                                                                                                                     \bTD Klasse M3A        \eTD \eTR
+   \bTR \bTD B.~Donner       \eTD                                                                                                                                     \bTD                   \eTD \eTR
+   \bTR \bTD \strut          \eTD                                                                                                                                     \bTD                   \eTD \eTR
+   \bTR \bTD 1. Schulaufgabe \eTD                                                                                                                                     \bTD 17.11.2025        \eTD \eTR
+   \eTABLE}
+
+\stopsetups
+
+\setupbackgrounds[header][text][bottomframe=on,setups=sabel,background=sabel]
+\setuppagenumbering[location={footer,middle},style=\bfc]
+
+\setupfootertexts
+  [BE: 67 Arbeitszeit: 60min][Viel Erfolg!]
+  [Viel Erfolg!][BE: 67 Arbeitszeit: 60min]
+
+
+\definedescription[example][
+  headstyle=\it, style=, align=left, location=top,
+  width=broad, margin=1cm, indenting=never, text=\hskip-1cm]
+
+\definemathcommand [kgV] [nolop] {\mfunction{kg\kern-.15em\hbox{V}}}
+
+\setdigitmode 3
+
+\setupitemgroup[itemize][1][n,repeat][width=1em]
+\setupitemgroup[itemize][2][n,repeat][width=2em]
+\setupitemgroup[itemize][3][n,repeat][width=3em]
+\setupitemgroup[itemize][4][n,repeat][width=4em]
+
+\startMPinclusions
+  input "include/metapost/mymacros.mp"
+\stopMPinclusions
+
+\starttext
+
+Hinweis: Achten Sie auf eine übersichtliche und schöne äußere Form, korrekte
+mathematische Schreibweise und geben Sie bei Textaufgaben kurze Antworten an.
+Gestalten Sie saubere und übersichtliche Zeichnungen in aussagekräftiger Größe.
+
+\startitemize
+\item Gegeben ist die reelle Funktion \math{g} mit \math{g(x) = (2x +1) e^{-\digits 0.5 x}}
+auf ihrer maximalen Definitionsmenge \math{D_g={\blackboard R}}. Der Graph der
+Funktion \math{g} wird mit \math{G_g} bezeichnet. Runden Sie Ihre Ergebnisse
+gegebenenfalls auf zwei Nachkommastellen.
+\startitemize
+\item Untersuchen Sie \math{G_g} auf mögliche Schnittpunkte mit den
+Koordinatenachsen. Geben Sie gegebenenfalls die Koordinaten der Schnittpunkte an. (BE~3) 
+\item Untersuchen Sie das Verhalten der Funktionswerte von \math{f} für
+\math{x \to -\infty} und \math{x \to +\infty}. Ermitteln Sie die Gleichung aller
+Asymptoten von \math{G_g}. (BE~3)
+\item Bestimmen Sie die Art und Lage der Extrempunkte von \math{G_g}. (BE~9)\\
+[mögliches Zwischenergebnis \math{g'(x) = (\digits 1.5 -x)e^{-\digits 0.5 x}}]
+\item Zeichnen Sie den Graphen \math{G_g} unter Verwendung aller bisherigen
+Ergebnisse und weiterer geeigneter Funktionswerte sowie alle Asymptoten von
+\math{G_g} mindestens im Bereich \math{-2 \leq x \leq 10} in ein kartesisches
+Koordinatensystem. (BE~7)
+\item Weisen Sie nach, wieviele Wendepunkte \math{G_g} besitzt und
+geben Sie diese gegebenenfalls an. (BE~3)
+\item Zeigen Sie, dass die Funktion \math{G(x) = (-4x-10)e^{-\digits 0.5 x}}
+eine Stammfunktion von \math{g} ist. (BE~3)
+\item Bestimmen Sie den Wert von \math{\int_{-1}^{0} g(x) dx} und interpretieren
+Sie das Ergebnis geometrisch. (BE~4)
+\stopitemize
+
+
+\item Gegeben ist die reelle Funktion \math{f} mit \math{f(x)=\ln \frac{x^2+2}{x}}
+auf ihrer maximalen Definitionsmenge \math{D_f}. Der Graph der Funktion
+\math{f} wird mit \math{G_f} bezeichnet. Runden Sie Ihre Ergebnisse
+gegebenenfalls auf zwei Nachkommastellen.
+\startitemize
+\item Geben Sie die Definitionsmenge \math{D_f} an. (BE~4)
+\item Untersuchen Sie die Funktion \math{f} auf mögliche Nullstellen. (BE~4)
+\item Bestimmen Sie Art und die Lage der Extempunkte von  \math{G_f}. (BE~11)\\
+[mögliches Zwischenergebnis \math{f'(x) = \frac{x^2 - 2}{(x^2 + 2)x}}]\\
+[mögliches Zwischenergebnis \math{f''(x) = \frac{-x^4 + 8x^2 + 4}{(x^2 + 2)^2 x^2}}]
+\item Untersuchen Sie das Verhalten der Funktionswerte an den Rändern des
+Definitionsbereichs. Ermitteln Sie die Gleichung aller Asymptoten von
+\math{G_f}. (BE~3)
+\item Weisen Sie nach, wieviele Wendepunkte \math{G_f} besitzt und
+geben Sie diese gegebenenfalls an. (BE~7)
+\item Zeichnen Sie den Graphen \math{G_f} unter Verwendung aller bisherigen
+Ergebnisse und weiterer geeigneter Funktionswerte sowie alle Asymptoten von
+\math{G_f} mindestens im Bereich \math{-\digits 0.5 \leq x \leq 8} in ein
+kartesisches Koordinatensystem. (BE~6)
+\stopitemize
+ 
+\stopitemize
+\stoptext

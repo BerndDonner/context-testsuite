@@ -1,0 +1,233 @@
+\mainlanguage[de]
+
+\setuplayout
+  [backspace=2.0cm,
+   height=middle,
+   width=middle,
+   leftmargin=1.8cm,
+   footerdistance=0.0cm,
+   rightmargindistance=0.2cm,
+   rightmargin=1.8cm,
+   bottom=0.5cm,
+   leftmargindistance=0.2cm,
+   header=2.1cm,
+   headerdistance=0.5cm,
+   footer=0.5cm,
+   top=0cm,
+   topspace=0.5cm,
+   bottomspace=0.0cm]
+
+\setupformulas[align=right]
+
+\definehead[exercise][subsection]
+
+\setuphead
+  [exercise]
+  [number=yes,
+   style=,
+   numberstyle=\ss\bf\tfb,
+   textstyle=\ss,
+   alternative=margin,
+   numbercommand={\determineheadnumber[subsection]\currentheadnumber\gobbleoneargument}]
+
+\setuphead
+  [chapter]
+  [number=no,
+   style=,
+   textstyle=\tfb\ss]
+
+\setuphead
+  [section]
+  [number=no,
+   style=,
+   textstyle=\tf\ss]
+
+\definemeasure[headerimageheight][\dimexpr(\headerheight-2ex)]
+
+\definelayer[sabel]
+
+\startsetups[sabel]
+
+\setlayerframed[sabel][x=0mm,y=0mm][frame=off,offset=none]
+{%
+   \setupTABLE[start][style=\tfx]
+   \setupTABLE[r][each][height=0.85\baselineskip]
+   \setupTABLE[column][1][align=right, width=.4\textwidth, loffset=-2pt, toffset=-5pt]%
+   \setupTABLE[column][2][align={center,lohi}, width=.2\textwidth]%
+   \setupTABLE[column][3][align=left, width=.4\textwidth, roffset=-2pt, toffset=-5pt]%
+   \bTABLE[frame=off]
+   \bTR \bTD Sabel-GBS                     \eTD \bTD [nr=5] \dontleavehmode\externalfigure[assets/sabel.png][maxheight=\measure{headerimageheight}, frame=off]\dontleavehmode \eTD \bTD Semester WS 2025 \eTD \eTR
+   \bTR \bTD Computergestützte Messtechnik \eTD                                                                                                                                     \bTD Klasse E3A       \eTD \eTR
+   \bTR \bTD B.~Donner                     \eTD                                                                                                                                     \bTD                  \eTD \eTR
+   \bTR \bTD \strut                        \eTD                                                                                                                                     \bTD                  \eTD \eTR
+   \bTR \bTD 1.Schulaufgabe                \eTD                                                                                                                                     \bTD 17.12.2025       \eTD \eTR
+   \eTABLE}
+
+\stopsetups
+
+\setupbackgrounds[header][text][bottomframe=on,setups=sabel,background=sabel]
+\setuppagenumbering[location={footer,middle},style=\bfc]
+
+\setupfootertexts
+  [BE: 48 Arbeitszeit: 60min][Viel Erfolg!]
+  [Viel Erfolg!][BE: 48 Arbeitszeit: 60min]
+
+
+\definedescription[example][
+  headstyle=\it, style=, align=left, location=top,
+  width=broad, margin=1cm, indenting=never, text=\hskip-1cm]
+
+\definemathcommand [kgV] [nolop] {\mfunction{kg\kern-.15em\hbox{V}}}
+
+\setdigitmode 3
+
+\setupitemgroup[itemize][1][n,repeat][width=1em]
+\setupitemgroup[itemize][2][n,repeat][width=2em]
+\setupitemgroup[itemize][3][n,repeat][width=3em]
+\setupitemgroup[itemize][4][n,repeat][width=4em]
+
+\startMPinclusions
+  input "include/metapost/mymacros.mp"
+\stopMPinclusions
+
+\definefloat
+   [combinationfloat]
+   [combinationfloats]
+   [figure]
+
+\setupcaption
+   [combinationfloat]
+   [number=no]
+
+\setupcaptions
+   [location={top, left}]
+
+\setupcombinations[location=top]
+
+\starttext
+
+\externalfigure[GBS-CMT/Datenblätter/Datenblatt_Hochdrucksensoren.pdf][width=\textwidth, frame=off]
+
+\page[yes]
+
+\externalfigure[GBS-CMT/Datenblätter/Datenblatt_Hochdrucksensoren.pdf][width=\textwidth, frame=off, page=2]
+
+\page[yes]
+
+Hinweise: Rechnen Sie auf drei signifikante Ziffern genau (drei
+Nachkommastellen). Versehen Sie Zahlen mit den korrekten Einheiten in Ihrer
+Lösung. Ersatzergebnisse geben nicht das korrekte Ergebnis wieder. Sie sind
+nur zum Lösen der weiteren Teilaufgaben gedacht.
+
+
+\startitemize
+\item Mit folgendem Sensor soll der Druck in einer Bremsleitung eines
+Fahrzeugs kontinuierlich überwacht werden. Die Versorgungsspannung des
+Sensors beträgt in der ganzen Aufgabe \digits{5.000}\unit{Volt}.
+\startitemize
+\item Auf dem Datenblatt befinden sich die Angaben: Druckbereich, Berstdruck
+und Überdruck max. Geben Sie die Grenzen der drei Druckbereiche an und
+erläutern Sie kurz, was in den einzelnen Druckbereichen geschieht. (BE~6)
+\item Berechnen Sie die Empfindlichkeit dieses Sensors laut Datenblatt. (BE~2)
+\item Bestimmen Sie rechnerisch den Bereich der Ausgangsspannung am unteren
+und am oberen Ende des Druckbereichs unter Berücksichtigung des Offset-- und
+Empfindlichkeitsfehlers. Beachten Sie, dass sich der Offsetfehler laut
+Datenblatt auf die Versorgungsspannung bezieht und der Empfindlichkeitsfehler
+auf den gemessenen Druck. (BE~8)
+\item Übertragen Sie die Kennline in ein korrekt und eindeutig beschriftetes
+Diagramm. Markieren Sie entlang dieser Kennline das Fehlerband dass sich
+insgesamt aus Offset-- und Empfindlichkeitsfehler ergibt. (1\unit{cm} pro
+\unit{Mega Pascal} und \digits{2.5}\unit{cm} pro \unit{Volt})  (BE~6)
+\item Bei einer Kalibrierung des Sensors haben Sie folgende Messwerte erhalten:
+
+\startframedtext[frame=off,offset=overlay]
+\starttabulate[|cw|ck1|ck1|ck1|ck1|ck1|ck1|][distance=none] 
+    \FL
+    \VL Druck in \unit{Mega Pascal}      \VL[3] \digits{0}    \VL  \digits{5}   \VL  \digits{10}  \VL  \digits{15}  \VL  \digits{20}  \VL  \digits{25}  \VL\AR
+    \LL[3]
+    \VL (Ist) Spannung in \unit{Volt}    \VL[3] \digits{0.59} \VL \digits{1.42} \VL \digits{2.14} \VL \digits{2.91} \VL \digits{3.86} \VL \digits{4.21} \VL\AR
+    \LL[1]                                               
+    \VL (Soll) Spannung in \unit{Volt}   \VL[3]               \VL               \VL               \VL               \VL               \VL               \VL\AR
+    \LL[1]                                               
+    \VL \Delta Spannung in \unit{Volt}   \VL[3]               \VL               \VL               \VL               \VL               \VL               \VL\AR
+   \BL
+\stoptabulate
+\stopframedtext
+\startitemize
+
+\item[it:Aufg21] Bestimmen Sie eine optimale Kennline mithilfe der Methode der kleinsten
+Quadrate. Geben Sie die Ausgleichsgerade für diese Messwerte auf drei gültige
+Ziffern an.
+
+[Ersatzergebnis zum Weiterrechnen, falls die Aufgabe nicht gelöst werden
+konnte: \math{U_A(p) = \digits{0.170}\frac{\unit{Volt}}{\unit{Mega Pascal}}
+\cdot p + \digits{0.651}\unit{Volt}}] (BE~4)
+
+\item Die gefundene Kalibrierungskennline weicht von der Kennlinie aus dem
+Datenblatt geringfügig ab. Bestimmen Sie den Offsetfehler bezogen auf die
+Versorgungsspannung, den die Kalibrierungskennline gegenüber der
+Datenblattkennlinie aufweist. (BE~3)
+
+\item Bestimmen Sie den Empfindlichkeitsfehler bezogen auf den gemessen Druck,
+den die Kalibrierungskennline gegenüber der Datenblattkennlinie aufweist.
+(BE~3)
+
+\item[it:Aufg24] Bestimmen Sie den verbleibenden Linearitätsfehler, bezüglich der
+Kalibrierungskennline (optimale Kennline). Geben Sie den Linearitätsfehler in
+Prozent--Fullscale an. (BE~6)
+
+\page[yes]
+
+\item Begründen Sie, ob dieser Sensor mit den obigen Messwerten noch innerhalb
+der Datenblattangaben liegt. (BE~2)
+\stopitemize
+
+% \item In Teilaufgabe 1.4 haben Sie bereits den absoluten Fehler als Fehlerband
+% um die Herstellerkennlinie eingezeichnet. Jetzt gilt es, den relativen Fehler
+% sowohl am unteren als auch am oberen Ende des Druckbereichs zu bestimmen.
+% Anschließend versuchen Sie bitte, den funktionalen Zusammenhang des relativen
+% Fehlers in Bezug auf die Eingangsgröße Druck darzustellen. Das Ziel besteht
+% darin, eine Funktion zu finden, die für jeden Eingangsdruck den entsprechenden
+% relativen Fehler liefert. Mithilfe dieser Funktion könnte das relative
+% Fehlerband grafisch dargestellt werden. (BE~4)
+
+\item In der folgenden Aufgabe soll der ursprüngliche Drucksensor kalibriert
+werden, allerdings haben Sie mit Einschränkungen zu kämpfen.
+
+\startitemize
+
+\item Sie dürfen aus Zeitgründen nur drei Messungen durchführen, um den
+Sensor zu kalibrieren. Ihre Aufgabe ist es, zu erklären, wie Sie die drei
+Messungen optimal aufteilen, um trotz der begrenzten Anzahl an Messungen die
+bestmögliche Genauigkeit der Kalibrierung zu erreichen.
+
+Hinweis: Der Sensor kann bei jedem Druckwert gleich wahrscheinlich von der
+idealen (linearen) Kennlinie abweichen.
+Begründen Sie Ihre Entscheidung für die Verteilung der Messpunkte. Gerne auch
+mithilfe einer Skizze. (BE~2)
+
+\item Leider hat Ihr Unternehmen Ihnen aus Kostengründen nur ein
+unzureichendes Druckmessgerät zur Verfügung gestellt. Mit diesem Gerät können
+Sie nur bei den Druckwerten 0, 5 und 10\unit{Mega Pascal} messen. Dabei
+erhalten Sie die in der Tabelle angegebenen Spannungswerte.
+
+Bleibt die Kalibrierungskennlinie im Vergleich zu \in{Teilaufgabe}[it:Aufg21]
+unverändert? Begründen Sie Ihre Antwort entweder durch eine Rechnung oder
+durch nachvollziehbare Argumente. (BE~2)
+
+\item Begründen Sie, wie sich der absolute Linearitätsfehler im Vergleich zu
+\in{Teilaufgabe}[it:Aufg24]
+verändern wird. (BE~2)
+
+\item Sie sollen einen Drucksensor mit einem Messbereich bis
+25\unit{Mega Pascal} kalibrieren. Allerdings können Sie nur Vergleichsdaten
+für die Druckwerte zwischen 0 und 10\unit{Mega Pascal} erheben.
+Skizzieren Sie Messdaten, die mit einem solchen eingeschränkten Verfahren
+niemals korrekt kalibriert werden können. Begründen Sie, warum diese
+eingeschränkte Kalibrierung bei Ihren Messdaten scheitern muss. (BE~2)
+
+\stopitemize
+\stopitemize
+\stopitemize
+
+\stoptext
