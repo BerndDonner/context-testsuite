@@ -12,10 +12,13 @@ import json
 import os
 from pathlib import Path
 import shutil
+import subprocess
+import tempfile
 
 from .context_process import run_context_process
 from .pdf import compare_files
 from .runner import executable
+from .regression_archive import write_regression_archive
 
 
 REGRESSIONS_ROOT = Path(__file__).resolve().parents[2] / "tests" / "regressions"
@@ -90,7 +93,7 @@ def _run_case(case: DocumentCase, context: str, destination: Path,
           f"  reference: {case.reference}\n  output:    {destination}")
     result = run_context_process(context, case.source.name, work=work,
                                  home=destination / "home", tex_cache=destination / "cache",
-                                 stdout_log=log, timeout=timeout)
+                                 stdout_log=log, timeout=timeout, once=False)
     candidate = work / f"{case.source.stem}.pdf"
     item = {"case": case.name, "source": str(case.source),
             "reference": str(case.reference), "engine": context,
@@ -126,7 +129,7 @@ def _run_case(case: DocumentCase, context: str, destination: Path,
 
 def run_regressions(context_arg: str, case_name: str, output: Path, *,
                     timeout: float = 600, dpi: int = 144, pixel_threshold: int = 16,
-                    root: Path = REGRESSIONS_ROOT) -> int:
+                    zip_results: bool = False, root: Path = REGRESSIONS_ROOT) -> int:
     """Return 2 on configuration, compilation or comparison errors; not on visual changes."""
     if timeout <= 0:
         raise ValueError("--timeout must be positive")
@@ -138,16 +141,29 @@ def run_regressions(context_arg: str, case_name: str, output: Path, *,
     if case_name != "all" and case_name not in names:
         raise ValueError(f"Unknown regression case {case_name!r}; available: {', '.join(names)}")
     selected = names if case_name == "all" else [case_name]
+    if output.is_symlink():
+        raise ValueError(f"Refusing symlinked output directory: {output}")
     output = _safe_output(root, output)
+    if output.exists() and (not output.is_dir() or any(output.iterdir())):
+        raise ValueError(f"Output already exists and is not empty: {output}; choose a new --output")
+    archive = output.with_name(output.name + ".zip") if zip_results else None
+    if archive is not None and archive.exists():
+        raise ValueError(f"Review ZIP already exists: {archive}; choose a new --output")
     context = executable(context_arg)
     # Validate all selected fixtures before launching anything. Incomplete cases fail visibly.
     cases = [_load_case(root, name) for name in selected]
     output.mkdir(parents=True, exist_ok=True)
+    engine_version = _engine_version(context)
+    testsuite_revision = _testsuite_revision()
     results = [_run_case(case, context, output / case.name, timeout=timeout, dpi=dpi,
                          pixel_threshold=pixel_threshold) for case in cases]
     failed = sum(item["status"] in ("compile_error", "comparison_error") for item in results)
     report = {"schema_version": 1, "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-              "engine": context, "cases": results,
+              "engine": context, "engine_version": engine_version,
+              "testsuite_revision": testsuite_revision,
+              "invocation": {"once": False, "case": case_name, "timeout_seconds": timeout,
+                             "dpi": dpi, "pixel_threshold": pixel_threshold},
+              "cases": results,
               "totals": {"selected": len(results), "changed": sum(r["status"] == "changed" for r in results),
                          "identical": sum(r["status"] == "identical" for r in results), "failed": failed}}
     path = output / "regression-report.json"
@@ -155,4 +171,35 @@ def run_regressions(context_arg: str, case_name: str, output: Path, *,
     print(f"\nDocument regressions: {len(results)} cases, {failed} failed, "
           f"{report['totals']['changed']} changed, {report['totals']['identical']} identical")
     print(f"Aggregate report: {path}")
+    if archive is not None:
+        write_regression_archive(output, cases, archive)
+        print(f"Review ZIP: {archive}")
     return 2 if failed else 0
+
+
+def _engine_version(context: str) -> str | None:
+    """Record --version for review; failure must not prevent regression runs."""
+    try:
+        with tempfile.TemporaryDirectory(prefix="cts-version-") as tmp:
+            result = subprocess.run([context, "--version"], cwd=tmp,
+                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                    text=True, errors="replace", timeout=10, check=False)
+            if result.returncode == 0:
+                return result.stdout.strip()[:8192] or None
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    return None
+
+
+def _testsuite_revision() -> str | None:
+    """Best-effort source revision for archived checkouts and installed wheels."""
+    repo = Path(__file__).resolve().parents[2]
+    try:
+        result = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
+                                stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                                text=True, timeout=5, check=False)
+        if result.returncode == 0:
+            return result.stdout.strip() or None
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    return None

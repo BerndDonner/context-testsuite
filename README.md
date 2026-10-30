@@ -21,7 +21,7 @@ context-testsuite pdf compare \
 
 # Historische Schulaufgaben gegen ihre feste Referenz vergleichen (mit ConTeXt)
 context-testsuite regression list
-context-testsuite regression run --context /pfad/zu/context --case all
+context-testsuite regression run --context /pfad/zu/context --case all --output results/dokumente-p1 --zip
 
 # Gezielte Math-Tests mit einer bestimmten ConTeXt-Engine ausführen
 context-testsuite run --context /pfad/zu/context --suite math-extended
@@ -42,6 +42,8 @@ Mit Nix (Python-DevShell, **ohne** ConTeXt-Installation):
 nix develop
 python -m pytest -q
 context-testsuite list
+context-testsuite --help
+context-testsuite regression run --help
 ```
 
 Ohne Nix (Python >= 3.11; keine Poppler-Abhängigkeit):
@@ -88,21 +90,21 @@ context-testsuite run --context /pfad/zu/context
 
 # Vollständiger Vergleich mit einer zweiten, z. B. ungepatchten Version
 context-testsuite run \
-  --baseline /pfad/context-upstream \
-  --context /pfad/context-patched \
+  --baseline ../NixOS-Config/result-context-upstream/bin/context \
+  --context ../NixOS-Config/result-context/bin/context \
   --suite all --output results/vergleich-oktober
 
 # Nur die 76 Glue-/Penalty-Fälle
-context-testsuite run --context /pfad/context-patched --suite math-extended
+context-testsuite run --context ../NixOS-Config/result-context/bin/context --suite math-extended
 
 # Adversarial-Forschung: große, optionale Testmatrix und reproduzierbare Fälle
 context-testsuite run \
-  --baseline /pfad/context-upstream \
-  --context /pfad/context-hans \
+  --baseline ../NixOS-Config/result-context-upstream/bin/context \
+  --context /pfad/zu/einem-instrumentierten-context \
   --suite math-adversarial --output results/hans-adversarial
 
 # Weitere explizite historische Einheiten-Stressdokumente
-context-testsuite run --context /pfad/context-patched --suite units-stress
+context-testsuite run --context ../NixOS-Config/result-context/bin/context --suite units-stress
 ```
 
 ConTeXt-Ausführbare dürfen auch als `context` aus `PATH` angegeben werden.
@@ -157,11 +159,11 @@ zwei ausführbare `context`-Dateien.
 **1. Beide Versionen bauen** (im Repository `NixOS-Config`):
 
 ```sh
-nix build .#context -o result-context-unpatched -L
-nix build .#context-patched -o result-context-patched -L
+nix build .#context-upstream -o result-context-upstream -L
+nix build .#context -o result-context -L
 ```
 
-Das sind die gepinnten Varianten derselben ConTeXt-Quellrevision. Ihre
+Das sind die getrennt gepinnten Varianten: `context` ist der gepatchte Standard (2026.10.25-p1), `context-upstream` ein neuerer ungepatchter Vergleichsstand. Ihre
 Paket-Build-/Smoke-Tests laufen wie bisher beim Build; die vollständige
 `context-testsuite` wird dabei **nicht** gestartet.
 
@@ -169,8 +171,8 @@ Paket-Build-/Smoke-Tests laufen wie bisher beim Build; die vollständige
 
 ```sh
 context-testsuite run \
-  --baseline ../NixOS-Config/result-context-unpatched/bin/context \
-  --context ../NixOS-Config/result-context-patched/bin/context \
+  --baseline ../NixOS-Config/result-context-upstream/bin/context \
+  --context ../NixOS-Config/result-context/bin/context \
   --suite all \
   --output results/lmtx-patch-validation
 ```
@@ -197,7 +199,7 @@ unter den jeweiligen `before/`- und `after/`-Ordnern untersuchen.
 
 ```sh
 context-testsuite run \
-  --context ../NixOS-Config/result-context-unpatched/bin/context \
+  --context ../NixOS-Config/result-context-upstream/bin/context \
   --suite math-extended \
   --output results/lmtx-upstream-only
 ```
@@ -232,14 +234,34 @@ ohne Registrierung in Python oder Shell-Skripte. Unvollständige Fälle werden
 ```sh
 context-testsuite regression list
 context-testsuite regression run \
-  --context ../NixOS-Config/result-context-patched/bin/context --case all
+  --context ../NixOS-Config/result-context/bin/context --case all \
+  --output results/dokumente-p1 --zip
 context-testsuite regression run \
-  --context ../NixOS-Config/result-context-patched/bin/context --case messtechnik-ws25
+  --context ../NixOS-Config/result-context/bin/context --case messtechnik-ws25 \
+  --output results/messtechnik-p1
 ```
 
 Die Quellen und Referenzen werden nicht modifiziert; nur der Kandidat wird
-gebaut. Die HTML-Vergleiche entstehen in `results/<case>/comparison/report.html`,
-der Gesamtbericht in `results/regression-report.json`. Zur Anzeige erscheint
+gebaut. Anders als die gezielten Math-/Diagnostiktests laufen **vollständige
+Dokument-Regressionen ohne `--once`**. Damit kann ConTeXt mehrere Durchläufe
+für Querverweise, Inhaltsverzeichnisse und weitere Mehrfachlaufdaten selbst
+steuern. Die HTML-Vergleiche entstehen in
+`<output>/<case>/comparison/report.html`, der Gesamtbericht in
+`<output>/regression-report.json`. Ohne `--output` gilt
+`results/regression-run` als Standard. **Ein vorhandenes, nicht leeres
+Ergebnisverzeichnis wird abgelehnt**, damit sich zwei Durchläufe nicht
+vermischen. Für einen weiteren Lauf einen neuen Ordner wählen.
+
+Mit `--zip` entsteht zusätzlich `<output>.zip` (z. B.
+`results/dokumente-p1.zip`). Das Offline-Archiv enthält die unveränderten
+Referenz-PDFs, neue PDFs soweit erstellt, Quelldateien einschließlich
+lokaler Assets, Compiler-Logs, die Vergleichsberichte und Differenzbilder
+sowie `regression-report.json` mit Engine-Version und Laufparametern.
+Die Archive sind auch bei **Kompilierungs- oder Vergleichsfehlern** verfügbar,
+sofern der Lauf regulär einen Bericht schreiben konnte. HOME/TEXMFCACHE und
+temporäre Hilfsdateien werden nicht archiviert. Bestehende ZIPs werden
+nicht überschrieben. Das ursprüngliche Verzeichnis bleibt zur lokalen
+Analyse erhalten. Zur Anzeige erscheint
 jeweils eine kopierbare Zeile `xdg-open /absoluter/pfad/report.html`.
 Unterschiede (`changed`) sind ein Befund und **kein automatischer FAIL**.
 Kompilier-/Vergleichsfehler führen zu Exitcode 2. Details einschließlich
@@ -250,6 +272,22 @@ Die Dokumentfälle sind bewusst **kein** automatischer Teil von `pytest` oder
 `context-testsuite run --suite all`: Sie benötigen eine explizit gewählte
 ConTeXt-Engine und dienen der manuellen Layoutanalyse. Die Referenz-PDFs
 sind historische Dateien, kein nachweislicher Output der Engine von 2024.
+
+## Befehlsübersicht
+
+`context-testsuite --help` zeigt alle Oberbefehle, Unterbefehle jeweils
+`context-testsuite <befehl> --help` (z. B. `regression run --help`).
+Die menschenlesbare `context-testsuite list` zeigt eingebaute Suites,
+Dokument-Regressionen und Diagnostik-Fälle. `list --json` bleibt für
+bestehende Verbraucher unverändert und liefert nur den alten Suite-Katalog.
+`regression list` zeigt ausschließlich die Dokumentfälle.
+
+`run --suite all` bedeutet **die drei standardmäßig freigegebenen Suites**
+(`math-basic`, `math-extended`, `units-smoke`), nicht die optionalen
+Forschungssuites. `math-adversarial` und `units-stress` müssen explizit
+gewählt werden. Die Befehle `diagnose`, `metamorphic`, `audit-math` und
+`export` haben eigene Hilfen; `export` bleibt der gezielte Math-Reproducer-
+Export, `regression run --zip` ist das vollständige Dokument-Review.
 
 ## Zwei beliebige PDFs vergleichen
 
@@ -314,7 +352,7 @@ sind in einem isolierten Nix-Build nicht zugänglich.
 Vom Verzeichnis `NixOS-Config/` aus nach dem Build des gewünschten Pakets:
 
 ```sh
-pkgs/context/tests/check-system-carlito.sh ./result-context-patched/bin/context
+pkgs/context/tests/check-system-carlito.sh ./result-context/bin/context
 ```
 
 Voraussetzung: Carlito muss auf dem Host systemweit vorhanden sein. Der
@@ -396,7 +434,7 @@ compilation never happens in the tracked source folder:
 ```sh
 context-testsuite diagnose \
   --case glue-option-entry \
-  --context /path/to/result-context-hans-trace/bin/context \
+  --context /path/to/instrumented-context/bin/context \
   --output results/diagnostics/glue-2026-10-28
 ```
 

@@ -23,7 +23,8 @@ class ProcessResult:
 
 def run_context_process(context: str, source_name: str, *, work: Path,
                         home: Path, tex_cache: Path, stdout_log: Path,
-                        timeout: float = 600, extra_args: tuple[str, ...] = ()) -> ProcessResult:
+                        timeout: float = 600, extra_args: tuple[str, ...] = (),
+                        once: bool = True) -> ProcessResult:
     if timeout <= 0:
         raise ValueError("timeout must be positive")
     work.mkdir(parents=True, exist_ok=True)
@@ -36,7 +37,7 @@ def run_context_process(context: str, source_name: str, *, work: Path,
     start = time.monotonic()
     with stdout_log.open("wb") as log:
         try:
-            process = subprocess.Popen([context, "--once", *extra_args, source_name], cwd=work,
+            process = subprocess.Popen([context, *(("--once",) if once else ()), *extra_args, source_name], cwd=work,
                                        env=env, stdout=log, stderr=subprocess.STDOUT,
                                        start_new_session=True)
         except OSError as exc:

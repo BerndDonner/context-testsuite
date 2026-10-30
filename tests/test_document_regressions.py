@@ -3,6 +3,7 @@ import hashlib
 import json
 import shlex
 import subprocess
+import zipfile
 from pathlib import Path
 
 import pymupdf
@@ -24,8 +25,10 @@ def pdf(path: Path, text: str):
 
 def fake_context(path: Path, source_pdf: Path, *, fail: bool = False):
     script = "#!/bin/sh\nset -eu\n"
+    script += 'if [ "${1:-}" = "--version" ]; then echo "ConTeXt 2026.10.25-p1"; exit 0; fi\n'
     script += "test -f assets/example.dat\n"
-    script += "for arg do :; done\n"  # --once precedes .tex
+    script += 'for arg do test "$arg" != "--once" || exit 42; done\n'
+    script += "for arg do :; done\n"
     if fail:
         script += "exit 4\n"
     else:
@@ -62,6 +65,9 @@ def test_auto_discovery_and_independent_workspaces(tmp_path, capsys):
     report = json.loads((out / "regression-report.json").read_text())
     assert [item["case"] for item in report["cases"]] == ["a-first", "b-extra"]
     assert report["totals"] == {"selected": 2, "changed": 2, "identical": 0, "failed": 0}
+    assert report["invocation"]["once"] is False
+    assert "testsuite_revision" in report
+    assert "2026.10.25-p1" in report["engine_version"]
     for name in case_names(root):
         assert (out / name / "work" / "assets" / "example.dat").is_file()
         assert not (out / name / "work" / "reference.pdf").exists()
@@ -72,11 +78,15 @@ def test_auto_discovery_and_independent_workspaces(tmp_path, capsys):
     assert f"xdg-open {out / 'a-first' / 'comparison' / 'report.html'}" in output
     assert f"xdg-open {out / 'b-extra' / 'comparison' / 'report.html'}" in output
 
-    # Repeat with an identical candidate. Existing text.diff is removed; candidate work reset.
+    # Reusing an occupied run directory would mix old and new cases.
     fake_context(engine, old)
-    assert run_regressions(str(engine), "a-first", out, dpi=72, root=root) == 0
-    assert not (out / "a-first" / "comparison" / "text.diff").exists()
-    assert json.loads((out / "regression-report.json").read_text())["totals"]["identical"] == 1
+    with pytest.raises(ValueError, match="already exists and is not empty"):
+        run_regressions(str(engine), "a-first", out, dpi=72, root=root)
+    next_run = tmp_path / "results-next"
+    assert run_regressions(str(engine), "a-first", next_run, dpi=72, root=root) == 0
+    assert not (next_run / "a-first" / "comparison" / "text.diff").exists()
+    assert json.loads((next_run / "regression-report.json").read_text())["totals"]["identical"] == 1
+    assert (out / "b-extra" / "comparison" / "report.html").is_file()
 
 
 def test_compile_failure_continues_and_is_reported(tmp_path):
@@ -172,3 +182,104 @@ def test_cli_single_case_standalone_without_real_engine(tmp_path):
     assert (out / "mathe-m3a-ws2526" / "work" / "include" / "metapost" / "mymacros.mp").is_file()
     assert (out / "mathe-m3a-ws2526" / "work" / "assets" / "sabel.png").is_file()
     assert json.loads((out / "regression-report.json").read_text())["totals"]["selected"] == 1
+
+
+def test_review_zip_is_self_contained_and_keeps_unicode(tmp_path):
+    old, new = tmp_path / "old.pdf", tmp_path / "new.pdf"
+    pdf(old, "reference")
+    pdf(new, "candidate")
+    root = tmp_path / "cases"
+    case = fixture(root, "cmt", old)
+    folder = case / "Datenblätter"
+    folder.mkdir()
+    (folder / "Überblick.txt").write_text("Information", encoding="utf-8")
+    engine = fake_context(tmp_path / "context-stub", new)
+    output = tmp_path / "runs" / "2026-p1"
+    assert run_regressions(str(engine), "all", output, root=root, dpi=72,
+                           zip_results=True) == 0
+    archive = output.with_name("2026-p1.zip")
+    with zipfile.ZipFile(archive) as zf:
+        names = set(zf.namelist())
+        expected = {"README.md", "manifest.json", "regression-report.json",
+                    "cmt/reference.pdf", "cmt/candidate.pdf", "cmt/context-build.log",
+                    "cmt/engine-path.txt", "cmt/source/source.tex",
+                    "cmt/source/Datenblätter/Überblick.txt",
+                    "cmt/comparison/report.html", "cmt/comparison/report.json"}
+        assert expected <= names
+        assert not any("/cache/" in n or "/home/" in n or ".tuc" in n for n in names)
+        assert zf.read("cmt/reference.pdf") == old.read_bytes()
+        assert zf.read("cmt/candidate.pdf") == new.read_bytes()
+        assert "ConTeXt 2026.10.25-p1" in zf.read("regression-report.json").decode()
+        manifest = json.loads(zf.read("manifest.json"))
+        import hashlib
+        record = next(row for row in manifest["files"] if row["path"] == "cmt/candidate.pdf")
+        assert record["sha256"] == hashlib.sha256(new.read_bytes()).hexdigest()
+    # Reusing either the archive or the result directory is forbidden.
+    with pytest.raises(ValueError, match="already exists"):
+        run_regressions(str(engine), "all", output, root=root, zip_results=True)
+
+
+def test_review_zip_even_when_compiler_fails(tmp_path):
+    old = tmp_path / "old.pdf"
+    pdf(old, "reference")
+    root = tmp_path / "cases"
+    fixture(root, "first", old)
+    fixture(root, "second", old)
+    engine = fake_context(tmp_path / "bad-context", old, fail=True)
+    output = tmp_path / "out"
+    assert run_regressions(str(engine), "all", output, root=root, zip_results=True) == 2
+    with zipfile.ZipFile(tmp_path / "out.zip") as zf:
+        names = set(zf.namelist())
+        assert "first/context-build.log" in names
+        assert "second/context-build.log" in names
+        assert "first/reference.pdf" in names
+        assert "second/reference.pdf" in names
+        assert "first/candidate.pdf" not in names
+        assert json.loads(zf.read("regression-report.json"))["totals"]["failed"] == 2
+
+
+def test_output_symlink_rejected(tmp_path):
+    old = tmp_path / "old.pdf"
+    pdf(old, "reference")
+    root = tmp_path / "cases"
+    fixture(root, "first", old)
+    engine = fake_context(tmp_path / "fake", old)
+    real = tmp_path / "real"
+    real.mkdir()
+    link = tmp_path / "link"
+    link.symlink_to(real, target_is_directory=True)
+    with pytest.raises(ValueError, match="symlinked"):
+        run_regressions(str(engine), "all", link, root=root)
+
+
+def test_cli_zip_option(tmp_path):
+    old = tmp_path / "old.pdf"
+    pdf(old, "same")
+    engine = tmp_path / "mock-context"
+    engine.write_text(f'#!/bin/sh\nset -eu\nif [ "${{1:-}}" = "--version" ]; then echo p1; exit 0; fi\n'
+                      f'for arg do test "$arg" != "--once" || exit 42; done\n'
+                      f'for arg do :; done\ncp {shlex.quote(str(old))} "${{arg%.tex}}.pdf"\n')
+    engine.chmod(0o755)
+    out = tmp_path / "single-run"
+    result = subprocess.run([str(CLI), "regression", "run", "--context", str(engine),
+                             "--case", "mathe-m3a-ws2526", "--output", str(out),
+                             "--dpi", "72", "--zip"], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    assert "Review ZIP:" in result.stdout
+    with zipfile.ZipFile(tmp_path / "single-run.zip") as zf:
+        assert "mathe-m3a-ws2526/reference.pdf" in zf.namelist()
+
+
+def test_shared_process_can_keep_math_once_and_disable_it_for_documents(tmp_path):
+    from context_testsuite.context_process import run_context_process
+    engine = tmp_path / "record-argv"
+    engine.write_text('#!/bin/sh\nprintf "%s\\n" "$@" > argv.txt\n')
+    engine.chmod(0o755)
+    for once in (True, False):
+        work = tmp_path / ("math" if once else "document")
+        result = run_context_process(str(engine), "test.tex", work=work,
+                                     home=work / "home", tex_cache=work / "cache",
+                                     stdout_log=work / "stdout.log", once=once)
+        assert result.exit_code == 0
+        assert (work / "argv.txt").read_text().splitlines() == (
+            ["--once", "test.tex"] if once else ["test.tex"])

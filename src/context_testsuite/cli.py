@@ -12,13 +12,19 @@ from .runner import available_suites, run_suites
 
 
 def make_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="context-testsuite", description=__doc__)
+    parser = argparse.ArgumentParser(
+        prog="context-testsuite", description=__doc__,
+        epilog=("Examples: context-testsuite list | "
+                "context-testsuite regression list | "
+                "context-testsuite regression run --context context --case all --zip | "
+                "context-testsuite pdf compare --reference old.pdf --candidate new.pdf"))
     actions = parser.add_subparsers(dest="command", required=True)
 
     run = actions.add_parser("run", help="Run built-in ConTeXt regression cases")
     run.add_argument("--context", required=True, help="Candidate ConTeXt executable (path or PATH command)")
     run.add_argument("--baseline", help="Optional upstream/reference ConTeXt executable")
-    run.add_argument("--suite", choices=["all", *available_suites()], default="all")
+    run.add_argument("--suite", choices=["all", *available_suites()], default="all",
+                     help="Suite to run; all = default safe suites (math-basic, math-extended, units-smoke); exploratory suites are opt-in")
     run.add_argument("--output", type=Path, default=Path("results/run"), help="Root for logs, PDFs and reports")
 
     export = actions.add_parser("export", help="Share selected already-rendered math cases as a ZIP")
@@ -30,7 +36,7 @@ def make_parser() -> argparse.ArgumentParser:
                         help="Include reference.pdf from a run with an explicit reference engine")
 
     diagnostics = actions.add_parser("diagnose", help="Run a standalone diagnostic in an isolated workspace")
-    diagnostics.add_argument("--case", required=True, help="Named fixture from cases/math/diagnostics")
+    diagnostics.add_argument("--case", required=True, help="Named fixture; see context-testsuite list")
     diagnostics.add_argument("--context", required=True, help="Explicitly selected (optionally instrumented) ConTeXt executable")
     diagnostics.add_argument("--output", type=Path, required=True, help="New empty report directory")
     diagnostics.add_argument("--observe-pages", action="store_true",
@@ -49,7 +55,7 @@ def make_parser() -> argparse.ArgumentParser:
     audit.add_argument("--from", dest="source_run", required=True, type=Path, help="Old suite directory")
     audit.add_argument("--output", required=True, type=Path, help="New audit directory outside the old suite")
 
-    suites = actions.add_parser("list", help="Describe the built-in test suites")
+    suites = actions.add_parser("list", help="List test suites, document regressions and diagnostic fixtures")
     suites.add_argument("--json", action="store_true", help="Machine-readable suite list")
 
     pdf = actions.add_parser("pdf", help="Explore arbitrary PDF differences")
@@ -61,13 +67,18 @@ def make_parser() -> argparse.ArgumentParser:
     comp.add_argument("--dpi", type=int, default=144, help="Raster DPI (72..300)")
     comp.add_argument("--pixel-threshold", type=int, default=16, help="RGB threshold (0..254)")
 
-    regression = actions.add_parser("regression", help="Compare frozen document cases to their reference PDFs")
+    regression = actions.add_parser("regression", help="Compare frozen document cases to their reference PDFs",
+                                    description="Document regressions run ConTeXt normally (multiple passes, no --once).")
     regression_actions = regression.add_subparsers(dest="regression_command", required=True)
     regression_actions.add_parser("list", help="List cases discovered under tests/regressions/")
-    document_run = regression_actions.add_parser("run", help="Compile candidates and compare with frozen references")
+    document_run = regression_actions.add_parser("run", help="Compile candidates and compare with frozen references",
+        description="Compile full ConTeXt documents with multiple passes (without --once), compare PDFs, and optionally create an offline review ZIP.")
     document_run.add_argument("--context", required=True, help="Candidate ConTeXt executable (path or PATH command)")
     document_run.add_argument("--case", default="all", help="Case directory name, or all (default)")
-    document_run.add_argument("--output", type=Path, default=Path("results"), help="Result root (default: results)")
+    document_run.add_argument("--output", type=Path, default=Path("results/regression-run"),
+                              help="New/empty result directory (default: results/regression-run)")
+    document_run.add_argument("--zip", action="store_true",
+                              help="Write <output>.zip with reference/candidate PDFs, source assets, logs and reports (also on case failure)")
     document_run.add_argument("--timeout", type=float, default=600, help="ConTeXt timeout in seconds per case")
     document_run.add_argument("--dpi", type=int, default=144, help="PDF comparison raster DPI (72..300)")
     document_run.add_argument("--pixel-threshold", type=int, default=16, help="RGB difference threshold (0..254)")
@@ -86,7 +97,7 @@ def main(argv: list[str] | None = None) -> int:
                 return 0
             return run_regressions(args.context, args.case, args.output,
                                    timeout=args.timeout, dpi=args.dpi,
-                                   pixel_threshold=args.pixel_threshold)
+                                   pixel_threshold=args.pixel_threshold, zip_results=args.zip)
         except (ValueError, OSError, RuntimeError) as exc:
             print(f"Error: {exc}", file=sys.stderr)
             return 2
@@ -95,8 +106,20 @@ def main(argv: list[str] | None = None) -> int:
         if args.json:
             print(json.dumps(catalog, indent=2, ensure_ascii=False))
         else:
+            from .document_regressions import case_names
+            from .diagnostics import available_diagnostics
+            print("Built-in suites (run --suite):")
             for key, description in catalog.items():
-                print(f"{key:17} {description}")
+                print(f"  {key:17} {description}")
+            print("\nDocument regressions (regression run --case):")
+            try:
+                for name in case_names():
+                    print(f"  {name}")
+            except ValueError as exc:
+                print(f"  unavailable: {exc}")
+            print("\nDiagnostics (diagnose --case):")
+            for name in available_diagnostics():
+                print(f"  {name}")
         return 0
     if args.command == "metamorphic":
         try:

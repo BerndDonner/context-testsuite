@@ -22,7 +22,7 @@
               # uses this environment, and CLI subprocesses must use it too.
               export PATH="${python}/bin:$PWD/bin:$PATH"
               export PYTHONPATH="$PWD/src''${PYTHONPATH:+:$PYTHONPATH}"
-              echo "context-testsuite: 'context-testsuite list' or 'python -m pytest -q'"
+              echo "context-testsuite: list | regression list | --help | python -m pytest -q"
             '';
           };
         });

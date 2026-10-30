@@ -109,3 +109,22 @@ def test_launcher_uses_shell_python_even_if_python3_is_unrelated(tmp_path):
                             env=env, capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     assert "math-extended" in json.loads(result.stdout)
+
+
+def test_human_list_discovers_document_and_diagnostic_cases():
+    res = subprocess.run(CLI + ["list"], capture_output=True, text=True)
+    assert res.returncode == 0, res.stderr
+    assert "Document regressions (regression run --case):" in res.stdout
+    assert "cmt-e3a-ws25" in res.stdout
+    assert "Diagnostics (diagnose --case):" in res.stdout
+    assert "noautobreak-explicit" in res.stdout
+
+
+def test_help_discovers_zip_and_multipass_policy():
+    root = subprocess.run(CLI + ["--help"], capture_output=True, text=True)
+    assert root.returncode == 0
+    assert "regression run" in root.stdout
+    run = subprocess.run(CLI + ["regression", "run", "--help"], capture_output=True, text=True)
+    assert run.returncode == 0
+    assert "--zip" in run.stdout
+    assert "multiple passes" in run.stdout
