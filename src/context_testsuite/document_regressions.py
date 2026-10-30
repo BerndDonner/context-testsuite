@@ -177,15 +177,48 @@ def run_regressions(context_arg: str, case_name: str, output: Path, *,
     return 2 if failed else 0
 
 
+def _version_summary(output: str) -> str | None:
+    """Keep version fields, not the potentially huge first-start cache log.
+
+    In particular, the Nix wrapper prints ``local build`` before ConTeXt's
+    resolver/cache initialization and ``current version`` only afterwards.
+    Truncating the raw output could therefore lose the actual version.
+    """
+    fields = ("local build:", "ConTeXt Process Management", "main context file:",
+              "current version:", "patchset:", "source revision:")
+    version_lines = []
+    other_lines = []
+    for raw in output.splitlines():
+        line = raw.strip()
+        prefix, separator, value = line.partition("|")
+        if separator and prefix.strip() == "mtx-context":
+            detail = value.strip()
+            if detail.startswith(fields):
+                version_lines.append(f"mtx-context | {detail}")
+        elif line:
+            other_lines.append(line)
+    if version_lines:
+        return "\n".join(version_lines)
+
+    # Also support minimal/custom compiler stubs without mtx-context prefixes.
+    # Do not mistake multi-line resolver/cache diagnostics for version data.
+    if len(other_lines) == 1:
+        return other_lines[0][:512]
+    for line in other_lines:
+        if line.startswith(("ConTeXt ", "LuaMetaTeX ", "Version:")):
+            return line[:512]
+    return None
+
+
 def _engine_version(context: str) -> str | None:
-    """Record --version for review; failure must not prevent regression runs."""
+    """Record concise --version details; failure must not prevent regressions."""
     try:
         with tempfile.TemporaryDirectory(prefix="cts-version-") as tmp:
             result = subprocess.run([context, "--version"], cwd=tmp,
                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                     text=True, errors="replace", timeout=10, check=False)
             if result.returncode == 0:
-                return result.stdout.strip()[:8192] or None
+                return _version_summary(result.stdout)
     except (OSError, subprocess.TimeoutExpired):
         pass
     return None

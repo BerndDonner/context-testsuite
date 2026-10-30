@@ -257,6 +257,8 @@ Mit `--zip` entsteht zusätzlich `<output>.zip` (z. B.
 Referenz-PDFs, neue PDFs soweit erstellt, Quelldateien einschließlich
 lokaler Assets, Compiler-Logs, die Vergleichsberichte und Differenzbilder
 sowie `regression-report.json` mit Engine-Version und Laufparametern.
+Die Versionsangabe enthält nur relevante `mtx-context`-Felder, keine
+Cache-Initialisierungs- oder Resolver-Meldungen.
 Die Archive sind auch bei **Kompilierungs- oder Vergleichsfehlern** verfügbar,
 sofern der Lauf regulär einen Bericht schreiben konnte. HOME/TEXMFCACHE und
 temporäre Hilfsdateien werden nicht archiviert. Bestehende ZIPs werden

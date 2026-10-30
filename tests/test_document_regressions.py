@@ -283,3 +283,46 @@ def test_shared_process_can_keep_math_once_and_disable_it_for_documents(tmp_path
         assert result.exit_code == 0
         assert (work / "argv.txt").read_text().splitlines() == (
             ["--once", "test.tex"] if once else ["test.tex"])
+
+
+def test_engine_version_ignores_cache_initialization_and_keeps_late_version(tmp_path):
+    """The first 8 KiB of `context --version` need not contain ConTeXt's version."""
+    from context_testsuite.document_regressions import _engine_version
+
+    engine = tmp_path / "noisy-context"
+    engine.write_text(
+        '#!/bin/sh\n'
+        'printf "mtx-context | local build: 2026.10.25-p1 (math-glue-noautobreak)\\n"\n'
+        'printf "Initializing ConTeXt cache ...\\n"\n'
+        'i=0\nwhile [ "$i" -lt 200 ]; do\n'
+        '  printf "resolvers | resolving | inspecting /nix/store/some-very-long-cache-path-%s\\n" "$i"\n'
+        '  i=$((i + 1))\ndone\n'
+        'printf "mtx-context | ConTeXt Process Management 1.06\\n"\n'
+        'printf "mtx-context | main context file: /nix/store/example/context.mkxl\\n"\n'
+        'printf "mtx-context | current version: 2026.10.25 20:06\\n"\n',
+        encoding="utf-8",
+    )
+    engine.chmod(0o755)
+
+    version = _engine_version(str(engine))
+    assert version == (
+        "mtx-context | local build: 2026.10.25-p1 (math-glue-noautobreak)\n"
+        "mtx-context | ConTeXt Process Management 1.06\n"
+        "mtx-context | main context file: /nix/store/example/context.mkxl\n"
+        "mtx-context | current version: 2026.10.25 20:06"
+    )
+    assert "resolvers" not in version
+    assert "Initializing" not in version
+
+
+def test_engine_version_fallback_and_missing_metadata(tmp_path):
+    from context_testsuite.document_regressions import _engine_version, _version_summary
+
+    assert _version_summary("ConTeXt 2026.10.25-p1\n") == "ConTeXt 2026.10.25-p1"
+    assert _version_summary("p1\n") == "p1"  # minimal CLI test stub
+    assert _version_summary("Initializing ConTeXt cache ...\nresolvers | resolving | scanning\n") is None
+
+    engine = tmp_path / "broken-version"
+    engine.write_text("#!/bin/sh\necho 'mtx-context | current version: broken'\nexit 1\n")
+    engine.chmod(0o755)
+    assert _engine_version(str(engine)) is None
