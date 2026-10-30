@@ -14,7 +14,7 @@ inline mathematical fraction, units, a table and cross-references.
 Run just this case from the repository root:
 
 ```sh
-context-testsuite regression run \
+context-testsuite run --suite documents \
   --context ../NixOS-Config/result-context-patched/bin/context \
   --case cmt-e3a-ws25
 ```

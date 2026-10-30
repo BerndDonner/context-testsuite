@@ -147,9 +147,9 @@ def test_disallows_output_inside_or_above_fixtures(tmp_path):
 
 def test_real_fixture_discovery_and_cli_list():
     names = ["cmt-e3a-ws25", "mathe-m3a-ws2526", "mathe-m3a-ws2526-nachtermin", "messtechnik-ws25"]
-    result = subprocess.run([str(CLI), "regression", "list"], text=True, capture_output=True)
+    result = subprocess.run([str(CLI), "list"], text=True, capture_output=True)
     assert result.returncode == 0, result.stderr
-    assert result.stdout.splitlines() == names
+    assert all(f"  {name}" in result.stdout for name in names)
     root = ROOT / "tests" / "regressions"
     for name in names:
         case = root / name
@@ -174,7 +174,7 @@ def test_cli_single_case_standalone_without_real_engine(tmp_path):
     engine.write_text(f"#!/bin/sh\nset -eu\nfor arg do :; done\ncp {shlex.quote(str(old))} \"${{arg%.tex}}.pdf\"\n")
     engine.chmod(0o755)
     out = tmp_path / "out"
-    result = subprocess.run([str(CLI), "regression", "run", "--context", str(engine),
+    result = subprocess.run([str(CLI), "run", "--suite", "documents", "--context", str(engine),
                              "--case", "mathe-m3a-ws2526", "--output", str(out),
                              "--dpi", "72"], capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
@@ -261,13 +261,14 @@ def test_cli_zip_option(tmp_path):
                       f'for arg do :; done\ncp {shlex.quote(str(old))} "${{arg%.tex}}.pdf"\n')
     engine.chmod(0o755)
     out = tmp_path / "single-run"
-    result = subprocess.run([str(CLI), "regression", "run", "--context", str(engine),
+    result = subprocess.run([str(CLI), "run", "--suite", "documents", "--context", str(engine),
                              "--case", "mathe-m3a-ws2526", "--output", str(out),
                              "--dpi", "72", "--zip"], capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     assert "Review ZIP:" in result.stdout
     with zipfile.ZipFile(tmp_path / "single-run.zip") as zf:
-        assert "mathe-m3a-ws2526/reference.pdf" in zf.namelist()
+        assert "inputs/document-regressions/reference.pdf" in zf.namelist()
+        assert "results/run-summary.json" in zf.namelist()
 
 
 def test_shared_process_can_keep_math_once_and_disable_it_for_documents(tmp_path):

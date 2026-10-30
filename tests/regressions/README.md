@@ -16,22 +16,22 @@ inputs from `unterrichts-texte` or `NixOS-Config`.
 From the repo root (after `nix develop`):
 
 ```sh
-context-testsuite regression list
-context-testsuite regression run \
+context-testsuite list
+context-testsuite run --suite documents \
   --context ../NixOS-Config/result-context/bin/context \
   --case all --output results/dokumente-p1 --zip
-context-testsuite regression run \
+context-testsuite run --suite documents \
   --context ../NixOS-Config/result-context/bin/context \
   --case mathe-m3a-ws2526 --output results/mathe-p1
 ```
 
-The default output root is `results/regression-run/`. Every case gets:
+The default output root is `results/run/`. Every case gets:
 
 - `<output>/<case>/work/`: frozen TeX inputs and candidate build artifacts
 - `<output>/<case>/context-build.log` and `engine-path.txt`
 - `<output>/<case>/comparison/report.html`, `report.json`, optional `text.diff`
 
-There is also `<output>/regression-report.json` summarizing the selected run.
+There are `<output>/regression-report.json` with document details and `<output>/run-summary.json` with shared CLI metadata.
 The CLI prints a directly copyable `xdg-open <absolute path>` for each HTML
 report, but does **not** start a browser by itself. The output root must not
 be inside the fixtures or contain them.
@@ -50,7 +50,7 @@ steuert seine normalen Mehrfachläufe für Referenzen und Inhaltsverzeichnisse.
 Die kleinen Math- und Diagnostiktests verwenden weiterhin `--once`.
 
 ```sh
-context-testsuite regression run \
+context-testsuite run --suite documents \
   --context ../NixOS-Config/result-context/bin/context \
   --case all --output results/dokumente-p1 --zip
 ```

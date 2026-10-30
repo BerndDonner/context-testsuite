@@ -22,10 +22,12 @@ SUITES = {
     "units-stress": "3 archived experimental units documents: compilation only (opt-in)",
 }
 DEFAULT_SUITES = ("math-basic", "math-extended", "units-smoke")
+DOCUMENT_SUITE = "documents"
+DOCUMENT_DESCRIPTION = "Frozen full-document regressions against reference PDFs (multipass)"
 
 
 def available_suites(*, description: bool = False):
-    return dict(SUITES) if description else list(SUITES)
+    return {**SUITES, DOCUMENT_SUITE: DOCUMENT_DESCRIPTION} if description else [*SUITES, DOCUMENT_SUITE]
 
 
 def executable(value: str) -> str:
@@ -71,7 +73,8 @@ def run_suites(context_arg: str, baseline_arg: str | None, suite: str, output: P
     baseline = executable(baseline_arg) if baseline_arg else context
     output = output.expanduser().resolve()
     output.mkdir(parents=True, exist_ok=True)
-    selected = list(DEFAULT_SUITES) if suite == "all" else [suite]
+    selected = (list(DEFAULT_SUITES) if suite == "default"
+                else list(SUITES) if suite == "all" else [suite])
     if not all(name in SUITES for name in selected):
         raise ValueError(f"Unknown suite: {suite}")
     results = []

@@ -4,8 +4,8 @@ from __future__ import annotations
 import argparse
 import json
 from shlex import quote
+from datetime import datetime, timezone
 from pathlib import Path
-import shutil
 import sys
 
 from .runner import available_suites, run_suites
@@ -16,19 +16,26 @@ def make_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="context-testsuite", description=__doc__,
         epilog=("Examples: context-testsuite list | "
-                "context-testsuite regression list | "
-                "context-testsuite regression run --context context --case all --zip | "
+                "context-testsuite run --context context --suite documents --case all --zip | "
                 "context-testsuite pdf compare --reference old.pdf --candidate new.pdf --zip | "
                 "Add --zip to any result-producing command for an offline review bundle."))
     actions = parser.add_subparsers(dest="command", required=True)
 
-    run = actions.add_parser("run", help="Run built-in ConTeXt regression cases")
+    run = actions.add_parser("run", help="Run built-in suites and/or frozen document regressions",
+                             description="Run math/units cases or multipass document regressions. "
+                             "Use --suite default for the three safe suites; "
+                             "--suite all for EVERY suite including exploratory and document tests.")
     run.add_argument("--context", required=True, help="Candidate ConTeXt executable (path or PATH command)")
-    run.add_argument("--baseline", help="Optional upstream/reference ConTeXt executable")
-    run.add_argument("--suite", choices=["all", *available_suites()], default="all",
-                     help="Suite to run; all = default safe suites (math-basic, math-extended, units-smoke); exploratory suites are opt-in")
+    run.add_argument("--baseline", help="Second ConTeXt engine for math comparisons; omitted = self-comparison. Document suites use frozen PDFs.")
+    run.add_argument("--suite", choices=["default", "all", *available_suites()], default="default",
+                     help="default = math-basic, math-extended, units-smoke; all = all suites "
+                     "including exploratory suites and documents; documents = frozen PDF cases")
+    run.add_argument("--case", default="all", help="Document case name or all (with --suite documents/all)")
+    run.add_argument("--timeout", type=float, default=600, help="Document compilation timeout in seconds per case (default 600)")
+    run.add_argument("--dpi", type=int, default=144, help="Document PDF comparison DPI (72..300)")
+    run.add_argument("--pixel-threshold", type=int, default=16, help="Document RGB difference threshold (0..254)")
     run.add_argument("--output", type=Path, default=Path("results/run"), help="Root for logs, PDFs and reports")
-    run.add_argument("--zip", action="store_true", help="Create complete offline review ZIP beside --output, including both engines and test definitions")
+    run.add_argument("--zip", action="store_true", help="Create a complete offline review ZIP beside --output, with PDFs, expectations, references, logs and reports")
 
     export = actions.add_parser("export", help="Share selected already-rendered math cases as a ZIP")
     export.add_argument("--from", dest="source_run", type=Path, required=True,
@@ -74,40 +81,11 @@ def make_parser() -> argparse.ArgumentParser:
     comp.add_argument("--pixel-threshold", type=int, default=16, help="RGB threshold (0..254)")
     comp.add_argument("--zip", action="store_true", help="Archive both PDFs (if present), reports and diff images")
 
-    regression = actions.add_parser("regression", help="Compare frozen document cases to their reference PDFs",
-                                    description="Document regressions run ConTeXt normally (multiple passes, no --once).")
-    regression_actions = regression.add_subparsers(dest="regression_command", required=True)
-    regression_actions.add_parser("list", help="List cases discovered under tests/regressions/")
-    document_run = regression_actions.add_parser("run", help="Compile candidates and compare with frozen references",
-        description="Compile full ConTeXt documents with multiple passes (without --once), compare PDFs, and optionally create an offline review ZIP.")
-    document_run.add_argument("--context", required=True, help="Candidate ConTeXt executable (path or PATH command)")
-    document_run.add_argument("--case", default="all", help="Case directory name, or all (default)")
-    document_run.add_argument("--output", type=Path, default=Path("results/regression-run"),
-                              help="New/empty result directory (default: results/regression-run)")
-    document_run.add_argument("--zip", action="store_true",
-                              help="Write <output>.zip with reference/candidate PDFs, source assets, logs and reports (also on case failure)")
-    document_run.add_argument("--timeout", type=float, default=600, help="ConTeXt timeout in seconds per case")
-    document_run.add_argument("--dpi", type=int, default=144, help="PDF comparison raster DPI (72..300)")
-    document_run.add_argument("--pixel-threshold", type=int, default=16, help="RGB difference threshold (0..254)")
-
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = make_parser().parse_args(argv)
-    if args.command == "regression":
-        try:
-            from .document_regressions import case_names, run_regressions
-            if args.regression_command == "list":
-                for name in case_names():
-                    print(name)
-                return 0
-            return run_regressions(args.context, args.case, args.output,
-                                   timeout=args.timeout, dpi=args.dpi,
-                                   pixel_threshold=args.pixel_threshold, zip_results=args.zip)
-        except (ValueError, OSError, RuntimeError) as exc:
-            print(f"Error: {exc}", file=sys.stderr)
-            return 2
     if args.command == "list":
         catalog = available_suites(description=True)
         if args.json:
@@ -115,10 +93,12 @@ def main(argv: list[str] | None = None) -> int:
         else:
             from .document_regressions import case_names
             from .diagnostics import available_diagnostics
-            print("Built-in suites (run --suite):")
+            print("Test suites (run --suite):")
+            print("  default           math-basic, math-extended, units-smoke (default)")
+            print("  all               all suites, including exploratory and documents")
             for key, description in catalog.items():
                 print(f"  {key:17} {description}")
-            print("\nDocument regressions (regression run --case):")
+            print("\nDocument cases (run --suite documents --case):")
             try:
                 for name in case_names():
                     print(f"  {name}")
@@ -187,23 +167,108 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "run":
         try:
-            from .runner import CASE_ROOT, DEFAULT_SUITES
-            selected = DEFAULT_SUITES if args.suite == "all" else (args.suite,)
-            # Generated case.tex files also reside under results; include the
-            # original case definitions (including JSON expectations and generators).
+            from .runner import CASE_ROOT, DEFAULT_SUITES, SUITES, DOCUMENT_SUITE, executable
+            from .document_regressions import (REGRESSIONS_ROOT, case_names, run_regressions,
+                                               _engine_version, _testsuite_revision)
+            # Validate arguments before running anything or touching an output tree.
+            docs = args.suite in (DOCUMENT_SUITE, "all")
+            builtins = (list(DEFAULT_SUITES) if args.suite == "default" else
+                        list(SUITES) if args.suite == "all" else
+                        [] if docs else [args.suite])
+            if args.case != "all" and not docs:
+                raise ValueError("--case is only valid with --suite documents or --suite all")
+            if args.suite == DOCUMENT_SUITE and args.baseline:
+                raise ValueError("--baseline is not used by documents: references are frozen PDFs")
+            if docs:
+                fixtures = REGRESSIONS_ROOT.resolve()
+                target = args.output.expanduser().resolve()
+                if target == fixtures or target.is_relative_to(fixtures) or fixtures.is_relative_to(target):
+                    raise ValueError(f"Output must be separate from tests/regressions/: {target}")
+                if args.case != "all" and args.case not in case_names():
+                    raise ValueError(f"Unknown document case: {args.case!r}")
+            if docs and args.timeout <= 0:
+                raise ValueError("--timeout must be positive")
+            if docs and not 72 <= args.dpi <= 300:
+                raise ValueError("--dpi must be between 72 and 300")
+            if docs and not 0 <= args.pixel_threshold <= 254:
+                raise ValueError("--pixel-threshold must be between 0 and 254")
+            if args.output.is_symlink():
+                raise ValueError(f"Refusing symlinked output directory: {args.output}")
+            output = args.output.expanduser().resolve()
+            if output.exists() and (not output.is_dir() or any(output.iterdir())):
+                raise ValueError(f"Output already exists and is not empty: {output}; choose a new --output")
+            context = executable(args.context)
+            baseline = executable(args.baseline) if args.baseline else None
+            if builtins and baseline is None:
+                print("Note: no --baseline supplied; math suites use candidate on both sides. "
+                      "Assertions still run, but this is NOT a cross-version comparison.", flush=True)
             sources = {}
-            for name in selected:
+            for name in builtins:
                 if name.startswith("math-"):
                     sources[name] = CASE_ROOT / "math" / name.removeprefix("math-")
                 elif name == "units-smoke":
                     sources[name] = CASE_ROOT / "units"
                 elif name == "units-stress":
                     sources[name] = CASE_ROOT.parent / "fixtures" / "units" / "archive"
-            with review_run(args.zip, args.output, kind="run", inputs=sources,
-                            engines={"candidate": args.context, "baseline": args.baseline},
-                            parameters={"suite": args.suite, "baseline_supplied": bool(args.baseline)}):
-                return run_suites(args.context, args.baseline, args.suite, args.output)
-        except (ValueError, OSError) as exc:
+            if docs:
+                # Include the original reference PDFs and local source/assets in
+                # the common archive, not just compiled candidates.
+                sources["document-regressions"] = (REGRESSIONS_ROOT if args.case == "all"
+                                                    else REGRESSIONS_ROOT / args.case)
+            with review_run(args.zip, output, kind="run", inputs=sources,
+                            engines={"candidate": context, "baseline": baseline},
+                            parameters={"suite": args.suite, "case": args.case,
+                                        "baseline_supplied": baseline is not None,
+                                        "timeout": args.timeout if docs else None,
+                                        "dpi": args.dpi if docs else None,
+                                        "pixel_threshold": args.pixel_threshold if docs else None}):
+                output.mkdir(parents=True, exist_ok=True)
+                sections = []
+                exit_codes = []
+                if builtins:
+                    # One built-in runner invocation produces one run-report.json.
+                    selection = ("default" if args.suite == "default" else
+                                 "all" if args.suite == "all" else builtins[0])
+                    status = run_suites(context, baseline, selection, output)
+                    exit_codes.append(status)
+                    suite_report = json.loads((output / "run-report.json").read_text(encoding="utf-8"))
+                    sections.extend({"suite": r["suite"], "kind": "built-in",
+                                     "result": r["result"], "report": "run-report.json"}
+                                    for r in suite_report["suites"])
+                if docs:
+                    # Keep the multipass document runner and frozen-PDF semantics.
+                    doc_root = output if not builtins else output / "documents"
+                    status = run_regressions(context, args.case, doc_root,
+                                             timeout=args.timeout, dpi=args.dpi,
+                                             pixel_threshold=args.pixel_threshold)
+                    exit_codes.append(status)
+                    document_report = json.loads((doc_root / "regression-report.json").read_text(encoding="utf-8"))
+                    sections.append({"suite": "documents", "kind": "frozen-pdf",
+                                     "result": "fail" if status else "pass",
+                                     "report": ("documents/" if builtins else "") + "regression-report.json",
+                                     "selected": document_report["totals"]["selected"],
+                                     "changed": document_report["totals"]["changed"],
+                                     "failed": document_report["totals"]["failed"]})
+                # Small common envelope; existing detailed report schemas remain untouched.
+                summary = {"schema_version": 1, "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                           "command": "run", "selection": {"suite": args.suite, "case": args.case},
+                           "testsuite_revision": _testsuite_revision(),
+                           "engines": {"candidate": {"path": context, "version": _engine_version(context)},
+                                       "baseline": ({"path": baseline, "version": _engine_version(baseline)}
+                                                    if baseline else None)},
+                           "baselines": {"builtins": ("explicit_engine" if baseline else "self_comparison")
+                                                     if builtins else None,
+                                         "documents": "frozen_pdf" if docs else None},
+                           "notes": {"builtins": ("No cross-version comparison; math candidate is compared to itself."
+                                                 if builtins and baseline is None else
+                                                 "Math suites compare two engines." if builtins else None),
+                                     "documents": "Frozen reference PDFs; ordinary multipass ConTeXt (no --once)." if docs else None},
+                           "sections": sections,
+                           "status": "fail" if any(exit_codes) else "pass"}
+                (output / "run-summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                print(f"Unified run summary: {output / 'run-summary.json'}", flush=True)
+                return max(exit_codes, default=0)
+        except (ValueError, OSError, RuntimeError) as exc:
             print(f"Error: {exc}", file=sys.stderr)
             return 2
     if args.command == "pdf" and args.pdf_command == "compare":

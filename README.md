@@ -20,8 +20,8 @@ context-testsuite pdf compare \
   --reference alt.pdf --candidate neu.pdf --output results/pdf-vergleich --zip
 
 # Historische Schulaufgaben gegen ihre feste Referenz vergleichen (mit ConTeXt)
-context-testsuite regression list
-context-testsuite regression run --context /pfad/zu/context --case all --output results/dokumente-p1 --zip
+context-testsuite list
+context-testsuite run --suite documents --context /pfad/zu/context --case all --output results/dokumente-p1 --zip
 
 # Gezielte Math-Tests mit einer bestimmten ConTeXt-Engine ausführen
 context-testsuite run --context /pfad/zu/context --suite math-extended --zip
@@ -37,9 +37,9 @@ und [eingebaute Testfälle](#eingebaute-testfälle).
 ## Einheitliches Review-ZIP (`--zip`)
 
 Alle Befehle, die Tests oder Vergleiche durchführen und ein Ergebnisverzeichnis
-schreiben, unterstützen `--zip`: `run`, `regression run`, `diagnose`,
+schreiben, unterstützen `--zip`: `run`, `diagnose`,
 `metamorphic`, `audit-math` und `pdf compare`. Bei `export` ist das Ergebnis
-bereits ein ZIP; `list` und `regression list` erzeugen keine Testdaten.
+bereits ein ZIP; `list` erzeugt keine Testdaten.
 
 Mit `--zip` entsteht `<output>.zip` **neben** dem Ergebnisverzeichnis.
 Das Ergebnisverzeichnis muss dafür neu oder leer sein; vorhandene ZIP-Dateien
@@ -53,8 +53,8 @@ Eingaberollen, fehlenden Eingaben, Testparametern, Engine-Versionsinformationen
 unter `results/`; die ursprünglichen Eingaben (insbesondere Soll-Definitionen,
 Quellen, Referenz-PDFs und bisherige Beobachtungen) unter `inputs/`, die zur
 Auswertung benötigten Python-Implementierungen unter `software/`.
-**Dokument-Regressionen behalten aus Kompatibilitätsgründen zusätzlich ihre
-bewährten direkten `<fall>/...`-Pfade.** Caches, Python-Bytecode und
+**Dokument-Regressionen behalten ihre Fallordner im Ergebnisverzeichnis;
+Referenz-PDFs und Quelldateien sind im Archiv unter `inputs/` verfügbar.** Caches, Python-Bytecode und
 ConTeXt-Binaries werden nicht archiviert. Das ZIP reicht für die unabhängige
 fachliche Begutachtung aus, ist aber keine vollständig ausführbare
 Nix-Reproduktionsumgebung. Die JSON-Berichte können ursprüngliche absolute
@@ -92,7 +92,7 @@ nix develop
 python -m pytest -q
 context-testsuite list
 context-testsuite --help
-context-testsuite regression run --help
+context-testsuite run --help
 ```
 
 Ohne Nix (Python >= 3.11; keine Poppler-Abhängigkeit):
@@ -134,14 +134,14 @@ stellt selbst keine bereit.
 ## Eingebaute Testfälle
 
 ```sh
-# Alle standardmäßig aktivierten Tests gegen die gewünschte ConTeXt-Version
-context-testsuite run --context /pfad/zu/context
+# Die drei Standardsuites gegen die gewünschte ConTeXt-Version
+context-testsuite run --context /pfad/zu/context --suite default
 
 # Vollständiger Vergleich mit einer zweiten, z. B. ungepatchten Version
 context-testsuite run \
   --baseline ../NixOS-Config/result-context-upstream/bin/context \
   --context ../NixOS-Config/result-context/bin/context \
-  --suite all --output results/vergleich-oktober
+  --suite default --output results/vergleich-oktober
 
 # Nur die 76 Glue-/Penalty-Fälle
 context-testsuite run --context ../NixOS-Config/result-context/bin/context --suite math-extended
@@ -157,7 +157,7 @@ context-testsuite run --context ../NixOS-Config/result-context/bin/context --sui
 ```
 
 ConTeXt-Ausführbare dürfen auch als `context` aus `PATH` angegeben werden.
-Alle Ergebnisse, PDF-Dateien, Logs und `run-report.json` landen unter
+Alle Ergebnisse, PDF-Dateien, Logs und `run-summary.json` landen unter
 `results/run/` (oder `--output`). Die Eingabedateien bleiben unverändert.
 Die Gesamtsuite läuft **nur auf ausdrücklichen Aufruf**. Sie ist kein
 Build-Hook, kein Nix-Check und nicht Teil eines anderen Repositories.
@@ -169,11 +169,14 @@ Build-Hook, kein Nix-Check und nicht Teil eines anderen Repositories.
 | `math-adversarial` (opt-in) | generierte Parameter-Matrix | **Explorativ**: verdächtige Umbrüche, Hypothesen und vollständige Reproducer; keine automatische Interpretation jedes Unterschieds als Regression |
 | `units-smoke` | `units-regression.tex` + beide benötigten Includes | **Nur Kompilierung und gültiges PDF**, keine garantierte Typografiekorrektheit |
 | `units-stress` | drei alte Unit-Stressdokumente | **Nur Kompilierung**, explizit opt-in |
+| `documents` | vier eingefrorene Schulaufgaben | Mehrfachläufe und Vergleich mit Referenz-PDFs; Änderungen sind nicht automatisch Fehler |
 
-`--suite all` enthält `math-basic`, `math-extended` und `units-smoke`.
-`units-stress` bleibt wegen der experimentellen historischen Herkunft opt-in.
-`math-adversarial` ist eine weitere bewusste, **nicht in `all` enthaltene**
-Untersuchung. Sie dokumentiert verifizierbare Grenzbedingungen getrennt von
+`--suite default` (auch ohne `--suite`) enthält nur `math-basic`,
+`math-extended` und `units-smoke`. `--suite all` führt **alle** eingebauten
+Suites, einschließlich `math-adversarial`, `units-stress` und der vier
+Dokument-Regressionen aus. Die experimentellen Tests bleiben dadurch vom
+Default getrennt und werden nur bei explizitem `all` oder bei direkter
+Auswahl gestartet. Die adversarielle Untersuchung dokumentiert verifizierbare Grenzbedingungen getrennt von
 Fragen zur Priorität von expliziten Math-Penalties und `noautobreak`. Jeder
 Verdachtsfall erhält eine eigenständige kleine `.tex`-Datei, PDF-Belege und
 Textauszüge. Siehe [Adversarial-README](src/context_testsuite/cases/math/adversarial/README.md).
@@ -222,15 +225,15 @@ Paket-Build-/Smoke-Tests laufen wie bisher beim Build; die vollständige
 context-testsuite run \
   --baseline ../NixOS-Config/result-context-upstream/bin/context \
   --context ../NixOS-Config/result-context/bin/context \
-  --suite all \
+  --suite default \
   --output results/lmtx-patch-validation
 ```
 
 Die relative Pfadangabe setzt voraus, dass die beiden Repositories
 nebeneinander liegen. Andernfalls die ausführbaren Dateien mit ihren
 absoluten Pfaden angeben. `--baseline` ist **ungepatcht**, `--context`
-ist **gepatcht**; ein Vertauschen ändert die Testaussage. Der Exitcode
-ist `0`, wenn alle gewählten Suites bestehen, sonst `1`.
+ist **gepatcht**; ein Vertauschen ändert die Testaussage. Der Exitcode ist `0`, wenn alle gewählten Suites bestehen, sonst `1` (Assertion-Fehler)
+oder `2` (beispielsweise unvollständiger Lauf oder Dokumentfehler).
 
 **3. Ergebnisse kontrollieren:**
 
@@ -281,11 +284,11 @@ ohne Registrierung in Python oder Shell-Skripte. Unvollständige Fälle werden
 **nicht stillschweigend ignoriert**, sondern als Fehler gemeldet.
 
 ```sh
-context-testsuite regression list
-context-testsuite regression run \
+context-testsuite list
+context-testsuite run --suite documents \
   --context ../NixOS-Config/result-context/bin/context --case all \
   --output results/dokumente-p1 --zip
-context-testsuite regression run \
+context-testsuite run --suite documents \
   --context ../NixOS-Config/result-context/bin/context --case messtechnik-ws25 \
   --output results/messtechnik-p1
 ```
@@ -297,7 +300,7 @@ für Querverweise, Inhaltsverzeichnisse und weitere Mehrfachlaufdaten selbst
 steuern. Die HTML-Vergleiche entstehen in
 `<output>/<case>/comparison/report.html`, der Gesamtbericht in
 `<output>/regression-report.json`. Ohne `--output` gilt
-`results/regression-run` als Standard. **Ein vorhandenes, nicht leeres
+`results/run` als Standard. **Ein vorhandenes, nicht leeres
 Ergebnisverzeichnis wird abgelehnt**, damit sich zwei Durchläufe nicht
 vermischen. Für einen weiteren Lauf einen neuen Ordner wählen.
 
@@ -319,26 +322,33 @@ Kompilier-/Vergleichsfehler führen zu Exitcode 2. Details einschließlich
 Hinweisen zum Hinzufügen von Tests stehen in
 [`tests/regressions/README.md`](tests/regressions/README.md).
 
-Die Dokumentfälle sind bewusst **kein** automatischer Teil von `pytest` oder
-`context-testsuite run --suite all`: Sie benötigen eine explizit gewählte
-ConTeXt-Engine und dienen der manuellen Layoutanalyse. Die Referenz-PDFs
+Die Dokumentfälle werden **nicht** von `pytest` oder `--suite default`
+automatisch gestartet. `run --suite documents` wählt nur Dokumente;
+`run --suite all` schließt sie ausdrücklich mit ein. Die Referenz-PDFs
 sind historische Dateien, kein nachweislicher Output der Engine von 2024.
 
 ## Befehlsübersicht
 
-`context-testsuite --help` zeigt alle Oberbefehle, Unterbefehle jeweils
-`context-testsuite <befehl> --help` (z. B. `regression run --help`).
-Die menschenlesbare `context-testsuite list` zeigt eingebaute Suites,
-Dokument-Regressionen und Diagnostik-Fälle. `list --json` bleibt für
-bestehende Verbraucher unverändert und liefert nur den alten Suite-Katalog.
-`regression list` zeigt ausschließlich die Dokumentfälle.
+`context-testsuite --help` listet die Oberbefehle, `run --help` alle
+Laufoptionen. `list` zeigt eingebaute Suites, einzelne Dokument-Regressionen
+und Diagnostikfälle; `list --json` listet alle auswählbaren Suites
+(einschließlich `documents`). Es gibt keinen `regression`-Oberbefehl mehr.
 
-`run --suite all` bedeutet **die drei standardmäßig freigegebenen Suites**
-(`math-basic`, `math-extended`, `units-smoke`), nicht die optionalen
-Forschungssuites. `math-adversarial` und `units-stress` müssen explizit
-gewählt werden. Die Befehle `diagnose`, `metamorphic`, `audit-math` und
-`export` haben eigene Hilfen; `export` bleibt der gezielte Math-Reproducer-
-Export, `regression run --zip` ist das vollständige Dokument-Review.
+`run --suite default` (auch ohne `--suite`) umfasst die drei sicheren
+Standardsuites. `run --suite all` umfasst **alle** Suites einschließlich
+explorativer und Dokumenttests. `run --suite documents --case <name>` führt
+einen Dokumentfall aus, `--case all` alle vier. Für Math-Vergleiche gibt
+`--baseline` eine zweite Engine an. Ohne `--baseline` werden Math-Fälle mit
+derselben Engine auf beiden Seiten beobachtet; die Assertions laufen trotzdem,
+aber ein Versionsvergleich findet **nicht** statt. Dokumenttests verwenden
+immer die eingefrorenen Referenz-PDFs und laufen ohne `--once`.
+
+`run-summary.json` enthält gemeinsame Laufmetadaten und Verweise auf die
+fachlichen Detailberichte `run-report.json` (Math/Units) und
+`regression-report.json` (Dokumente). Bei `--suite all` liegt der
+Dokumentbericht unter `documents/regression-report.json`. Das `--zip`-Archiv
+enthält auch die ursprünglichen Eingaben einschließlich Referenz-PDFs.
+`diagnose`, `metamorphic`, `audit-math` und `export` bleiben eigenständig.
 
 ## Zwei beliebige PDFs vergleichen
 

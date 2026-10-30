@@ -69,7 +69,7 @@ def test_review_zip_written_after_failure_and_does_not_overwrite(tmp_path):
 
 
 def test_cli_zip_options_on_all_report_commands():
-    for cmd in (["run"], ["regression", "run"], ["diagnose"],
+    for cmd in (["run"], ["diagnose"],
                 ["metamorphic"], ["audit-math"], ["pdf", "compare"]):
         proc = subprocess.run([str(CLI), *cmd, "--help"], capture_output=True, text=True)
         assert proc.returncode == 0, proc.stderr
