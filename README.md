@@ -17,14 +17,14 @@ unabhängige Funktionen verwendet werden:
 ```sh
 # Zwei beliebige vorhandene PDFs vergleichen (ohne ConTeXt)
 context-testsuite pdf compare \
-  --reference alt.pdf --candidate neu.pdf --output results/pdf-vergleich
+  --reference alt.pdf --candidate neu.pdf --output results/pdf-vergleich --zip
 
 # Historische Schulaufgaben gegen ihre feste Referenz vergleichen (mit ConTeXt)
 context-testsuite regression list
 context-testsuite regression run --context /pfad/zu/context --case all --output results/dokumente-p1 --zip
 
 # Gezielte Math-Tests mit einer bestimmten ConTeXt-Engine ausführen
-context-testsuite run --context /pfad/zu/context --suite math-extended
+context-testsuite run --context /pfad/zu/context --suite math-extended --zip
 ```
 
 Der freie PDF-Vergleich schreibt seinen HTML-Bericht nach
@@ -33,6 +33,55 @@ kopierbaren `xdg-open`-Befehl aus, öffnet aber keinen Browser automatisch.
 Weitere Erläuterungen: [PDF-Vergleich](#zwei-beliebige-pdfs-vergleichen),
 [Dokument-Regressionen](#dokument-regressionen-gegen-unveränderte-pdf-referenzen)
 und [eingebaute Testfälle](#eingebaute-testfälle).
+
+## Einheitliches Review-ZIP (`--zip`)
+
+Alle Befehle, die Tests oder Vergleiche durchführen und ein Ergebnisverzeichnis
+schreiben, unterstützen `--zip`: `run`, `regression run`, `diagnose`,
+`metamorphic`, `audit-math` und `pdf compare`. Bei `export` ist das Ergebnis
+bereits ein ZIP; `list` und `regression list` erzeugen keine Testdaten.
+
+Mit `--zip` entsteht `<output>.zip` **neben** dem Ergebnisverzeichnis.
+Das Ergebnisverzeichnis muss dafür neu oder leer sein; vorhandene ZIP-Dateien
+werden niemals überschrieben. Auch bei fehlgeschlagenen Assertions oder
+Kompilierungen wird ein Archiv erzeugt, sofern ein Ergebnisordner mit
+Diagnoseinformationen existiert.
+
+Jedes Archiv enthält `README.md` und `manifest.json` mit Prüfsummen,
+Eingaberollen, fehlenden Eingaben, Testparametern, Engine-Versionsinformationen
+(sofern abrufbar) und der Testsuite-Revision. Die Ergebnisse und Logs liegen
+unter `results/`; die ursprünglichen Eingaben (insbesondere Soll-Definitionen,
+Quellen, Referenz-PDFs und bisherige Beobachtungen) unter `inputs/`, die zur
+Auswertung benötigten Python-Implementierungen unter `software/`.
+**Dokument-Regressionen behalten aus Kompatibilitätsgründen zusätzlich ihre
+bewährten direkten `<fall>/...`-Pfade.** Caches, Python-Bytecode und
+ConTeXt-Binaries werden nicht archiviert. Das ZIP reicht für die unabhängige
+fachliche Begutachtung aus, ist aber keine vollständig ausführbare
+Nix-Reproduktionsumgebung. Die JSON-Berichte können ursprüngliche absolute
+Pfade enthalten; die im Manifest referenzierten ZIP-Dateien sind vollständig
+offline verfügbar.
+
+Beispiel: ungepatchtes Upstream als Kandidat gegen den gepatchten Default:
+
+```sh
+context-testsuite run \
+  --context ../NixOS-Config/result-context-upstream/bin/context \
+  --baseline ../NixOS-Config/result-context/bin/context \
+  --suite math-basic \
+  --output results/math-basic-upstream-vs-p1 --zip
+
+context-testsuite run \
+  --context ../NixOS-Config/result-context-upstream/bin/context \
+  --baseline ../NixOS-Config/result-context/bin/context \
+  --suite math-extended \
+  --output results/math-extended-upstream-vs-p1 --zip
+```
+
+Die beiden ZIP-Dateien können ohne weitere Dateien zur KI-Analyse hochgeladen
+werden. Wichtig: `--baseline` ist hier der *gepatchte* Stand `p1`,
+`--context` ist das neue *ungepatchte* Upstream. Ein Test-FAIL kann daher
+eine echte Verhaltensregression oder eine nicht zu diesem Vergleich passende
+historische Assertion sein; maßgeblich sind die Einzelbeobachtungen.
 
 ## Installation und Selbsttests
 

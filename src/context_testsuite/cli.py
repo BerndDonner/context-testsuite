@@ -9,6 +9,7 @@ import shutil
 import sys
 
 from .runner import available_suites, run_suites
+from .review_archive import review_run
 
 
 def make_parser() -> argparse.ArgumentParser:
@@ -17,7 +18,8 @@ def make_parser() -> argparse.ArgumentParser:
         epilog=("Examples: context-testsuite list | "
                 "context-testsuite regression list | "
                 "context-testsuite regression run --context context --case all --zip | "
-                "context-testsuite pdf compare --reference old.pdf --candidate new.pdf"))
+                "context-testsuite pdf compare --reference old.pdf --candidate new.pdf --zip | "
+                "Add --zip to any result-producing command for an offline review bundle."))
     actions = parser.add_subparsers(dest="command", required=True)
 
     run = actions.add_parser("run", help="Run built-in ConTeXt regression cases")
@@ -26,6 +28,7 @@ def make_parser() -> argparse.ArgumentParser:
     run.add_argument("--suite", choices=["all", *available_suites()], default="all",
                      help="Suite to run; all = default safe suites (math-basic, math-extended, units-smoke); exploratory suites are opt-in")
     run.add_argument("--output", type=Path, default=Path("results/run"), help="Root for logs, PDFs and reports")
+    run.add_argument("--zip", action="store_true", help="Create complete offline review ZIP beside --output, including both engines and test definitions")
 
     export = actions.add_parser("export", help="Share selected already-rendered math cases as a ZIP")
     export.add_argument("--from", dest="source_run", type=Path, required=True,
@@ -44,16 +47,19 @@ def make_parser() -> argparse.ArgumentParser:
     diagnostics.add_argument("--trace-mode", action="store_true",
                               help="Enable the source's optional ConTeXt trace mode (requires instrumented engine for CTS-LB)")
     diagnostics.add_argument("--timeout", type=float, default=120, help="Wall-clock limit in seconds (default 120)")
+    diagnostics.add_argument("--zip", action="store_true", help="Archive complete diagnosis for offline review")
 
     metamorphic = actions.add_parser("metamorphic", help="Evaluate explicit relations in saved adversarial results")
     metamorphic.add_argument("--from", dest="source_run", required=True, type=Path,
                              help="Run root, math-adversarial directory, or observations.json")
     metamorphic.add_argument("--output", required=True, type=Path, help="New separate report directory")
+    metamorphic.add_argument("--zip", action="store_true", help="Archive report and original observation inputs")
 
     audit = actions.add_parser("audit-math", help="Replay saved Poppler observations without recompilation")
     audit.add_argument("--suite", required=True, choices=["math-basic", "math-extended", "math-adversarial"])
     audit.add_argument("--from", dest="source_run", required=True, type=Path, help="Old suite directory")
     audit.add_argument("--output", required=True, type=Path, help="New audit directory outside the old suite")
+    audit.add_argument("--zip", action="store_true", help="Archive report and original PDF/observation inputs")
 
     suites = actions.add_parser("list", help="List test suites, document regressions and diagnostic fixtures")
     suites.add_argument("--json", action="store_true", help="Machine-readable suite list")
@@ -66,6 +72,7 @@ def make_parser() -> argparse.ArgumentParser:
     comp.add_argument("--output", type=Path, help="Report directory (default: results/pdf/<candidate-stem>)")
     comp.add_argument("--dpi", type=int, default=144, help="Raster DPI (72..300)")
     comp.add_argument("--pixel-threshold", type=int, default=16, help="RGB threshold (0..254)")
+    comp.add_argument("--zip", action="store_true", help="Archive both PDFs (if present), reports and diff images")
 
     regression = actions.add_parser("regression", help="Compare frozen document cases to their reference PDFs",
                                     description="Document regressions run ConTeXt normally (multiple passes, no --once).")
@@ -124,7 +131,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "metamorphic":
         try:
             from .metamorphic import run
-            report = run(args.source_run, args.output)
+            with review_run(args.zip, args.output, kind="metamorphic",
+                            inputs={"observations": args.source_run},
+                            parameters={"command": "metamorphic"}):
+                report = run(args.source_run, args.output)
         except (OSError, ValueError, RuntimeError, KeyError, TypeError) as exc:
             print(f"Error: {exc}", file=sys.stderr)
             return 2
@@ -134,7 +144,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "audit-math":
         try:
             from .observer_audit import audit
-            report = audit(args.suite, args.source_run, args.output)
+            with review_run(args.zip, args.output, kind="audit-math",
+                            inputs={"source-run": args.source_run},
+                            parameters={"suite": args.suite}):
+                report = audit(args.suite, args.source_run, args.output)
         except (ValueError, OSError, RuntimeError, KeyError) as exc:
             print(f"Error: {exc}", file=sys.stderr)
             return 2
@@ -144,8 +157,14 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "diagnose":
         try:
             from .diagnostics import diagnose
-            report, folder = diagnose(args.case, args.context, args.output, timeout=args.timeout,
-                                      observe_pages=args.observe_pages, trace_mode=args.trace_mode)
+            from .diagnostics import DIAGNOSTIC_ROOT
+            with review_run(args.zip, args.output, kind="diagnose",
+                            inputs={"fixture": DIAGNOSTIC_ROOT / f"{args.case}.tex"},
+                            engines={"candidate": args.context},
+                            parameters={"case": args.case, "observe_pages": args.observe_pages,
+                                        "trace_mode": args.trace_mode, "timeout": args.timeout}):
+                report, folder = diagnose(args.case, args.context, args.output, timeout=args.timeout,
+                                          observe_pages=args.observe_pages, trace_mode=args.trace_mode)
         except (ValueError, OSError) as exc:
             print(f"Error: {exc}", file=sys.stderr)
             return 2
@@ -168,7 +187,22 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "run":
         try:
-            return run_suites(args.context, args.baseline, args.suite, args.output)
+            from .runner import CASE_ROOT, DEFAULT_SUITES
+            selected = DEFAULT_SUITES if args.suite == "all" else (args.suite,)
+            # Generated case.tex files also reside under results; include the
+            # original case definitions (including JSON expectations and generators).
+            sources = {}
+            for name in selected:
+                if name.startswith("math-"):
+                    sources[name] = CASE_ROOT / "math" / name.removeprefix("math-")
+                elif name == "units-smoke":
+                    sources[name] = CASE_ROOT / "units"
+                elif name == "units-stress":
+                    sources[name] = CASE_ROOT.parent / "fixtures" / "units" / "archive"
+            with review_run(args.zip, args.output, kind="run", inputs=sources,
+                            engines={"candidate": args.context, "baseline": args.baseline},
+                            parameters={"suite": args.suite, "baseline_supplied": bool(args.baseline)}):
+                return run_suites(args.context, args.baseline, args.suite, args.output)
         except (ValueError, OSError) as exc:
             print(f"Error: {exc}", file=sys.stderr)
             return 2
@@ -180,7 +214,10 @@ def main(argv: list[str] | None = None) -> int:
                 raise ValueError("--pixel-threshold must be between 0 and 254")
             folder = args.output or Path("results/pdf") / args.candidate.stem
             from .pdf import compare_files
-            data, folder = compare_files(args.reference, args.candidate, folder, args.dpi, args.pixel_threshold)
+            with review_run(args.zip, folder, kind="pdf-compare",
+                            inputs={"reference": args.reference, "candidate": args.candidate},
+                            parameters={"dpi": args.dpi, "pixel_threshold": args.pixel_threshold}):
+                data, folder = compare_files(args.reference, args.candidate, folder, args.dpi, args.pixel_threshold)
         except (ValueError, OSError, RuntimeError) as exc:
             print(f"Error: {exc}", file=sys.stderr)
             return 2
